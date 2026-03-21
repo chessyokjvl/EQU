@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ระบบบริหารจัดการเครื่องมือแพทย์</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Sarabun', sans-serif; } </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+    <nav class="bg-blue-800 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <span class="text-xl font-bold">MedEquip Center</span>
+                    <div class="hidden md:flex space-x-2">
+                        <a href="dashboard.html" class="bg-blue-900 px-3 py-2 rounded-md text-sm font-medium">ภาพรวม (Dashboard)</a>
+                        <a href="devices.html" class="hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">จัดการเครื่องมือ (Devices)</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="displayUser" class="text-sm text-blue-200"></span>
+                    <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-sm transition">ออกจากระบบ</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 class="text-2xl font-bold text-slate-800 mb-6">ภาพรวมระบบ (Executive Dashboard)</h1>
+        
+        <div id="guestWarning" class="hidden bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-r-md shadow-sm">
+            <p class="text-amber-800 text-sm">คุณเข้าชมในฐานะ <b>Guest</b> จะสามารถดูข้อมูลภาพรวมได้เท่านั้น ไม่สามารถเพิ่มหรือแก้ไขข้อมูลได้</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+                <p class="text-sm font-medium text-slate-500">เครื่องมือทั้งหมดในระบบ</p>
+                <p class="text-3xl font-bold text-blue-600 mt-2" id="statTotal">0</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+                <p class="text-sm font-medium text-slate-500">พร้อมใช้งาน</p>
+                <p class="text-3xl font-bold text-emerald-600 mt-2" id="statReady">0</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+                <p class="text-sm font-medium text-slate-500">กำลังถูกยืมใช้งาน</p>
+                <p class="text-3xl font-bold text-amber-500 mt-2" id="statInUse">0</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+                <p class="text-sm font-medium text-slate-500">ส่งซ่อมบำรุง / สอบเทียบ</p>
+                <p class="text-3xl font-bold text-red-500 mt-2" id="statRepair">0</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        checkAuth(); // เช็คสิทธิ์ก่อน
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const role = localStorage.getItem('userRole');
+            document.getElementById('displayUser').innerText = `${localStorage.getItem('username')} (${role})`;
+
+            if (role === 'guest') {
+                document.getElementById('guestWarning').classList.remove('hidden');
+            }
+
+            // โหลดข้อมูลจาก API เพื่อมาทำสถิติ
+            const res = await callAPI({ action: 'getDevices' });
+            if (res && res.success && res.data) {
+                const devices = res.data;
+                document.getElementById('statTotal').innerText = devices.length;
+                
+                // นับจำนวนตามสถานะ
+                const ready = devices.filter(d => d.Status === 'พร้อมใช้').length;
+                const inUse = devices.filter(d => d.Status === 'ถูกยืม').length;
+                const repair = devices.filter(d => d.Status === 'ส่งซ่อม').length;
+
+                document.getElementById('statReady').innerText = ready;
+                document.getElementById('statInUse').innerText = inUse;
+                document.getElementById('statRepair').innerText = repair;
+            }
+        });
+    </script>
+</body>
+</html>
