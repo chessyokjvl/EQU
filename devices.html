@@ -7,15 +7,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
-    
     <style> 
         body { font-family: 'Sarabun', sans-serif; } 
-        /* ปรับแต่ง Tom Select ให้เข้ากับ Tailwind */
         .ts-control { border-radius: 0.5rem; border-color: #e2e8f0; padding: 0.5rem 0.75rem; }
+        /* พื้นหลังสีดำโปร่งแสงสำหรับ Modal */
+        .modal-overlay { background-color: rgba(0, 0, 0, 0.5); }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
-    <nav class="bg-blue-800 text-white shadow-md sticky top-0 z-50">
+<body class="bg-slate-50 min-h-screen relative">
+    <nav class="bg-blue-800 text-white shadow-md sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
             <div class="flex space-x-4">
                 <span class="text-xl font-bold">MedEquip</span>
@@ -29,92 +29,32 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <h1 class="text-2xl font-bold text-slate-800">ทะเบียนเครื่องมือแพทย์</h1>
-            <button id="btnOpenModal" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg shadow-sm font-medium transition">+ เพิ่มเครื่องมือใหม่</button>
+            <button id="btnOpenAddModal" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg shadow-sm font-medium transition">+ เพิ่มเครื่องมือใหม่</button>
         </div>
 
         <div id="addDeviceSection" class="hidden bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-6">
-            <h2 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">ลงทะเบียนเครื่องมือใหม่ (ครบถ้วน 25 รายการ)</h2>
+            <h2 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">ลงทะเบียนเครื่องมือใหม่ (สำหรับ Admin)</h2>
             <form id="addDeviceForm">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div><label class="text-xs text-slate-600">ลำดับ (No)</label><input type="text" id="f_No" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-600">เลขครุภัณฑ์ (DeviceID)</label><input type="text" id="f_DeviceID" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500" required></div>
-                    <div><label class="text-xs text-slate-600">ชื่อเรียก/คุณลักษณะ (Name)</label><input type="text" id="f_Name" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500" required></div>
-                    
-                    <div><label class="text-xs text-slate-600">หมวด/ชนิด (Category)</label><input type="text" id="f_Category" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-600">ยี่ห้อ (Brand)</label><input type="text" id="f_Brand" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-600">รุ่น (Model)</label><input type="text" id="f_Model" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    
+                    <div><label class="text-xs text-slate-600">เลขครุภัณฑ์ (DeviceID)</label><input type="text" id="f_DeviceID" class="w-full border p-2 rounded text-sm mt-1" required></div>
+                    <div><label class="text-xs text-slate-600">ชื่อเรียก/คุณลักษณะ (Name)</label><input type="text" id="f_Name" class="w-full border p-2 rounded text-sm mt-1" required></div>
                     <div><label class="text-xs text-slate-600">สถานะ (Status)</label>
-                        <select id="f_Status" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500">
-                            <option value="ปกติ">ปกติ</option>
-                            <option value="ชำรุด">ชำรุด</option>
-                            <option value="ยกเลิก">ยกเลิก</option>
-                        </select>
+                        <select id="f_Status" class="w-full border p-2 rounded text-sm mt-1"><option value="ปกติ">ปกติ</option><option value="ชำรุด">ชำรุด</option></select>
                     </div>
-                    <div><label class="text-xs text-slate-600">ระดับความเสี่ยง (RiskLevel)</label>
-                        <select id="f_RiskLevel" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500">
-                            <option value="">ไม่ระบุ</option><option value="สูง">สูง</option><option value="กลาง">กลาง</option><option value="ต่ำ">ต่ำ</option>
-                        </select>
-                    </div>
-                    <div><label class="text-xs text-slate-600">การสอบเทียบ (CalibrateNeed)</label><input type="text" id="f_CalibrateNeed" placeholder="จำเป็น/ไม่จำเป็น" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    
-                    <div><label class="text-xs text-slate-600">ผลสอบเทียบล่าสุด (CalResult)</label><input type="text" id="f_CalResult" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-600">แผนจัดหาทดแทน (ReplacePlan)</label><input type="text" id="f_ReplacePlan" placeholder="มี/ยังไม่มี" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-600">ประเภท (Type)</label><input type="text" id="f_Type" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-
-                    <div><label class="text-xs text-slate-600">แผนกฝ่ายตามบัญชี (DeptOwner)</label><input type="text" id="f_DeptOwner" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-600">ใช้งานที่ฝ่าย (DeptUse)</label><input type="text" id="f_DeptUse" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-600">สถานที่ใช้งาน (Location)</label><input type="text" id="f_Location" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-600">ผู้รับผิดชอบ (PIC)</label><input type="text" id="f_PIC" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-
-                    <div><label class="text-xs text-slate-600">ปีงบประมาณที่ได้มา (FiscalYear)</label><input type="text" id="f_FiscalYear" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-600">วันเดือนปีที่ได้มา (AcqDate)</label><input type="text" id="f_AcqDate" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-600">วิธีการได้มา (AcqMethod)</label><input type="text" id="f_AcqMethod" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-600">ผู้ขาย (Vendor)</label><input type="text" id="f_Vendor" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-600">ราคาต่อหน่วย (Price)</label><input type="number" id="f_Price" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-600">หน่วยนับ (Unit)</label><input type="text" id="f_Unit" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-600">อายุการใช้งาน/ปี (LifeSpan)</label><input type="number" id="f_LifeSpan" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-600">ค่าเสื่อมต่อปี (Deprec)</label><input type="number" id="f_Deprec" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
-                    <div class="md:col-span-2"><label class="text-xs text-slate-600">หมายเหตุ (Note)</label><input type="text" id="f_Note" class="w-full border p-2 rounded text-sm mt-1 outline-none focus:border-blue-500"></div>
                 </div>
                 <div class="flex justify-end space-x-2 mt-6 border-t pt-4">
-                    <button type="button" id="btnCancel" class="bg-slate-200 text-slate-700 px-6 py-2 rounded hover:bg-slate-300">ยกเลิก</button>
-                    <button type="submit" id="btnSaveDevice" class="bg-blue-600 text-white px-8 py-2 rounded hover:bg-blue-700">บันทึกข้อมูลเข้าสู่ระบบ</button>
+                    <button type="button" onclick="document.getElementById('addDeviceSection').classList.add('hidden')" class="bg-slate-200 text-slate-700 px-6 py-2 rounded">ยกเลิก</button>
+                    <button type="submit" id="btnSaveNew" class="bg-blue-600 text-white px-8 py-2 rounded">บันทึกข้อมูล</button>
                 </div>
             </form>
         </div>
 
         <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 mb-6">
-            <h2 class="text-sm font-bold text-slate-600 mb-3 flex items-center">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-                ตัวกรองและค้นหาข้อมูล
-            </h2>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                    <label class="text-xs text-slate-500 mb-1 block">ค้นหา (ชื่อเครื่อง / เลขครุภัณฑ์)</label>
-                    <input type="text" id="searchBox" class="w-full border border-slate-200 p-2 rounded-lg text-sm outline-none focus:border-blue-500" placeholder="พิมพ์คำค้นหา...">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-500 mb-1 block">สถานะเครื่องมือ</label>
-                    <select id="filterStatus" placeholder="เลือกสถานะ...">
-                        <option value="">ทั้งหมด (All)</option>
-                        <option value="ปกติ">ปกติ (พร้อมใช้งาน)</option>
-                        <option value="ชำรุด">ชำรุด (ส่งซ่อม)</option>
-                        <option value="ยกเลิก">ยกเลิก (แทงจำหน่าย)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-xs text-slate-500 mb-1 block">หน่วยงาน (Department)</label>
-                    <select id="filterDept" placeholder="พิมพ์เพื่อค้นหาหน่วยงาน..."><option value="">ทั้งหมด</option></select>
-                </div>
-                <div>
-                    <label class="text-xs text-slate-500 mb-1 block">ประเภท (Category)</label>
-                    <select id="filterCat" placeholder="พิมพ์เพื่อค้นหาประเภท..."><option value="">ทั้งหมด</option></select>
-                </div>
-            </div>
-            <div class="mt-4 flex justify-between items-center text-sm text-slate-500">
-                <span id="resultCount">กำลังโหลดข้อมูล...</span>
-                <button onclick="resetFilters()" class="text-blue-600 hover:underline">ล้างตัวกรองทั้งหมด</button>
+                <div><label class="text-xs text-slate-500 mb-1 block">ค้นหาชื่อ/เลขครุภัณฑ์</label><input type="text" id="searchBox" class="w-full border p-2 rounded-lg text-sm"></div>
+                <div><label class="text-xs text-slate-500 mb-1 block">สถานะ</label><select id="filterStatus"><option value="">ทั้งหมด</option><option value="ปกติ">ปกติ</option><option value="ชำรุด">ชำรุด</option><option value="ถูกยืม">ถูกยืม</option></select></div>
+                <div><label class="text-xs text-slate-500 mb-1 block">หน่วยงาน</label><select id="filterDept"><option value="">ทั้งหมด</option></select></div>
+                <div><label class="text-xs text-slate-500 mb-1 block">ประเภท</label><select id="filterCat"><option value="">ทั้งหมด</option></select></div>
             </div>
         </div>
 
@@ -123,10 +63,10 @@
                 <thead class="bg-slate-50">
                     <tr>
                         <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">เลขครุภัณฑ์</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">ชื่อเครื่องมือ / ยี่ห้อ</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">ประเภท</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">ชื่อเครื่องมือ</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">แผนกที่ใช้งาน</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">สถานะ</th>
+                        <th class="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">จัดการ</th>
                     </tr>
                 </thead>
                 <tbody id="deviceTableBody" class="bg-white divide-y divide-slate-200">
@@ -136,178 +76,205 @@
         </div>
     </div>
 
+    <div id="manageModal" class="fixed inset-0 modal-overlay hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden">
+            <div class="bg-blue-800 px-6 py-4 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white">จัดการสถานะเครื่องมือ</h3>
+                <button onclick="closeManageModal()" class="text-blue-200 hover:text-white text-xl leading-none">&times;</button>
+            </div>
+            
+            <form id="manageForm" class="p-6">
+                <div class="bg-slate-50 p-3 rounded border mb-4">
+                    <p class="text-xs text-slate-500">กำลังทำรายการสำหรับ:</p>
+                    <p class="font-bold text-slate-800" id="m_DeviceName">-</p>
+                    <p class="text-sm text-slate-600">รหัส: <span id="m_DeviceIDDisplay">-</span></p>
+                    <input type="hidden" id="m_DeviceID"> </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">อัปเดตสถานะล่าสุด</label>
+                        <select id="m_Status" class="w-full border border-slate-300 p-2 rounded-lg outline-none focus:border-blue-500">
+                            <option value="ปกติ">ปกติ (พร้อมใช้ / คืนเครื่อง)</option>
+                            <option value="ถูกยืม">ถูกยืม (ใช้งานชั่วคราว)</option>
+                            <option value="ชำรุด">ชำรุด (แจ้งซ่อม)</option>
+                            <option value="ยกเลิก">ยกเลิก (แทงจำหน่าย)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">แผนกที่ใช้งานล่าสุด</label>
+                        <input type="text" id="m_DeptUse" class="w-full border border-slate-300 p-2 rounded-lg outline-none focus:border-blue-500" placeholder="เช่น ER, ICU, OPD">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">สถานที่ปัจจุบัน</label>
+                        <input type="text" id="m_Location" class="w-full border border-slate-300 p-2 rounded-lg outline-none focus:border-blue-500" placeholder="ระบุห้องหรืออาคาร">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">หมายเหตุ / อาการเสีย / ชื่อผู้ยืม</label>
+                        <textarea id="m_Note" rows="2" class="w-full border border-slate-300 p-2 rounded-lg outline-none focus:border-blue-500" placeholder="ระบุข้อมูลเพิ่มเติม..."></textarea>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="closeManageModal()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300">ยกเลิก</button>
+                    <button type="submit" id="btnUpdate" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">บันทึกการเปลี่ยนแปลง</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="js/app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     
     <script>
         checkAuth();
-        
-        let allDevicesData = []; // เก็บข้อมูล Master ไว้สำหรับ Filter
+        let allDevicesData = [];
         let tomSelectDept, tomSelectCat, tomSelectStatus;
+        const currentUserRole = localStorage.getItem('userRole');
 
-        // ฟังก์ชันเริ่มการทำงาน
         document.addEventListener('DOMContentLoaded', async () => {
-            if (localStorage.getItem('userRole') !== 'guest') {
-                document.getElementById('btnOpenModal').classList.remove('hidden');
+            // แสดงปุ่ม "เพิ่มเครื่องมือ" เฉพาะ Admin
+            if (currentUserRole === 'admin') {
+                document.getElementById('btnOpenAddModal').classList.remove('hidden');
             }
-            
-            // โหลดข้อมูลจาก Database
             await fetchAndPrepareData();
-            
-            // ตรวจสอบ URL Parameter ว่ามีการกดมาจาก Dashboard หรือไม่
-            const urlParams = new URLSearchParams(window.location.search);
-            const statusFilter = urlParams.get('status');
-            if (statusFilter && tomSelectStatus) {
-                tomSelectStatus.setValue(statusFilter); // เซ็ตค่าแล้ว TomSelect จะ trigger change ไปเรียก applyFilters เอง
-            }
         });
 
-        // 1. โหลดข้อมูลและสร้าง Options สำหรับ Tom Select
         async function fetchAndPrepareData() {
             const res = await callAPI({ action: 'getDevices' });
             if (res && res.success && res.data) {
                 allDevicesData = res.data;
-                
-                // สกัดชื่อหน่วยงาน และ ประเภท ที่ไม่ซ้ำกันออกมา
                 const uniqueDepts = [...new Set(allDevicesData.map(d => d.DeptUse || d.DeptOwner).filter(Boolean))].sort();
                 const uniqueCats = [...new Set(allDevicesData.map(d => d.Category).filter(Boolean))].sort();
 
-                // ใส่ Option ลงใน Select HTML
                 const deptSelect = document.getElementById('filterDept');
                 uniqueDepts.forEach(dept => deptSelect.add(new Option(dept, dept)));
                 
                 const catSelect = document.getElementById('filterCat');
                 uniqueCats.forEach(cat => catSelect.add(new Option(cat, cat)));
 
-                // เริ่มต้นเปิดใช้งาน Tom Select
                 initTomSelect();
-                
-                // วาดตารางครั้งแรก (แสดงทั้งหมด)
                 renderTable(allDevicesData);
-            } else {
-                document.getElementById('deviceTableBody').innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-red-500">ไม่สามารถเชื่อมต่อฐานข้อมูลได้</td></tr>';
             }
         }
 
-        // 2. ฟังก์ชันเปิดใช้งาน Tom Select
         function initTomSelect() {
             const commonConfig = { plugins: ['clear_button'], create: false, sortField: { field: "text", direction: "asc" } };
-            
-            tomSelectStatus = new TomSelect("#filterStatus", { ...commonConfig, sortField: null }); // ไม่ต้องเรียง ก-ฮ ให้ใช้ตามลำดับ HTML
+            tomSelectStatus = new TomSelect("#filterStatus", { ...commonConfig, sortField: null });
             tomSelectDept = new TomSelect("#filterDept", commonConfig);
             tomSelectCat = new TomSelect("#filterCat", commonConfig);
 
-            // เมื่อมีการเปลี่ยนค่าใน Tom Select ให้สั่ง Filter ตารางทันที
             tomSelectStatus.on('change', applyFilters);
             tomSelectDept.on('change', applyFilters);
             tomSelectCat.on('change', applyFilters);
-            
-            // ผูก Event ให้กับช่อง Search Text
             document.getElementById('searchBox').addEventListener('input', applyFilters);
         }
 
-        // 3. ฟังก์ชันกรองข้อมูล
         function applyFilters() {
             const searchText = document.getElementById('searchBox').value.toLowerCase();
             const statusVal = tomSelectStatus.getValue();
             const deptVal = tomSelectDept.getValue();
             const catVal = tomSelectCat.getValue();
 
-            // คัดกรองข้อมูลจาก allDevicesData
             const filteredData = allDevicesData.filter(d => {
-                const matchSearch = (d.Name || '').toLowerCase().includes(searchText) || (d.DeviceID || '').toLowerCase().includes(searchText) || (d.Brand || '').toLowerCase().includes(searchText);
+                const matchSearch = (d.Name || '').toLowerCase().includes(searchText) || (d.DeviceID || '').toLowerCase().includes(searchText);
                 const matchStatus = statusVal === '' || d.Status === statusVal;
                 const matchDept = deptVal === '' || (d.DeptUse === deptVal || d.DeptOwner === deptVal);
                 const matchCat = catVal === '' || d.Category === catVal;
-                
                 return matchSearch && matchStatus && matchDept && matchCat;
             });
-
             renderTable(filteredData);
         }
 
-        // 4. ฟังก์ชันวาดตาราง
         function renderTable(data) {
             const tbody = document.getElementById('deviceTableBody');
             tbody.innerHTML = ''; 
-            
-            document.getElementById('resultCount').innerHTML = `พบข้อมูล <b>${data.length}</b> รายการ`;
 
             if (data.length > 0) {
                 data.forEach(d => {
                     let statusColor = 'bg-slate-100 text-slate-800'; 
                     if (d.Status === 'ปกติ') statusColor = 'bg-emerald-100 text-emerald-800';
                     else if (d.Status === 'ชำรุด') statusColor = 'bg-red-100 text-red-800';
+                    else if (d.Status === 'ถูกยืม') statusColor = 'bg-amber-100 text-amber-800';
                     else if (d.Status === 'ยกเลิก') statusColor = 'bg-gray-200 text-gray-600';
+
+                    // สร้างปุ่มจัดการ (แสดงสำหรับ admin และ user ซ่อนสำหรับ guest)
+                    let actionBtn = '';
+                    if (currentUserRole !== 'guest') {
+                        // ป้องกันปัญหา String ที่มี Single Quote ด้วยการแปลงข้อมูลก่อนส่งเข้าฟังก์ชัน
+                        const safeName = (d.Name || '').replace(/'/g, "\\'");
+                        const safeLoc = (d.Location || '').replace(/'/g, "\\'");
+                        const safeDept = (d.DeptUse || d.DeptOwner || '').replace(/'/g, "\\'");
+                        const safeNote = (d.Note || '').replace(/'/g, "\\'");
+                        
+                        actionBtn = `<button onclick="openManageModal('${d.DeviceID}', '${safeName}', '${d.Status}', '${safeLoc}', '${safeDept}', '${safeNote}')" class="bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-600 hover:text-white px-4 py-1.5 rounded-md text-xs font-medium transition shadow-sm">จัดการ</button>`;
+                    } else {
+                        actionBtn = `<span class="text-xs text-slate-400">-</span>`;
+                    }
 
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-50 transition";
                     tr.innerHTML = `
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">${d.DeviceID || '-'}</td>
-                        <td class="px-6 py-4 text-sm text-slate-700">
-                            <div class="font-medium">${d.Name || '-'}</div>
-                            <div class="text-xs text-slate-400 mt-1">${d.Brand ? 'ยี่ห้อ: '+d.Brand : ''} ${d.Model ? 'รุ่น: '+d.Model : ''}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${d.Category || '-'}</td>
+                        <td class="px-6 py-4 text-sm text-slate-700">${d.Name || '-'}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${d.DeptUse || d.DeptOwner || '-'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">${d.Status || '-'}</span></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full ${statusColor}">${d.Status || '-'}</span></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center">${actionBtn}</td>
                     `;
                     tbody.appendChild(tr);
                 });
             } else {
-                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500 bg-slate-50">ไม่พบเครื่องมือที่ตรงกับเงื่อนไขการค้นหา</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">ไม่พบเครื่องมือ</td></tr>';
             }
         }
 
-        // 5. ฟังก์ชันล้างตัวกรอง
-        function resetFilters() {
-            document.getElementById('searchBox').value = '';
-            tomSelectStatus.clear();
-            tomSelectDept.clear();
-            tomSelectCat.clear();
-            // applyFilters() จะถูกเรียกอัตโนมัติเมื่อ .clear() ทำงาน
+        // ================= ฟังก์ชันควบคุม Modal การจัดการ =================
+        function openManageModal(id, name, status, location, dept, note) {
+            document.getElementById('m_DeviceID').value = id;
+            document.getElementById('m_DeviceIDDisplay').innerText = id;
+            document.getElementById('m_DeviceName').innerText = name;
+            document.getElementById('m_Status').value = status;
+            document.getElementById('m_Location').value = location;
+            document.getElementById('m_DeptUse').value = dept;
+            document.getElementById('m_Note').value = note;
+            
+            document.getElementById('manageModal').classList.remove('hidden');
         }
 
-        // ================= สคริปต์สำหรับฟอร์มเพิ่มข้อมูล =================
-        document.getElementById('btnOpenModal').addEventListener('click', () => document.getElementById('addDeviceSection').classList.remove('hidden'));
-        document.getElementById('btnCancel').addEventListener('click', () => {
-            document.getElementById('addDeviceSection').classList.add('hidden');
-            document.getElementById('addDeviceForm').reset();
-        });
+        function closeManageModal() {
+            document.getElementById('manageModal').classList.add('hidden');
+        }
 
-        document.getElementById('addDeviceForm').addEventListener('submit', async (e) => {
+        // ส่งข้อมูลอัปเดตไปยัง API
+        document.getElementById('manageForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btnSaveDevice'); btn.innerText = 'กำลังบันทึก...'; btn.disabled = true;
-            
-            // ... (สร้าง Payload ตาม ID ของ Input) ...
+            const btn = document.getElementById('btnUpdate');
+            btn.innerText = 'กำลังบันทึก...'; btn.disabled = true;
+
             const payload = {
-                action: 'addDevice',
-                No: document.getElementById('f_No').value, DeviceID: document.getElementById('f_DeviceID').value,
-                Name: document.getElementById('f_Name').value, Category: document.getElementById('f_Category').value,
-                Brand: document.getElementById('f_Brand').value, Model: document.getElementById('f_Model').value,
-                Status: document.getElementById('f_Status').value, RiskLevel: document.getElementById('f_RiskLevel').value,
-                CalibrateNeed: document.getElementById('f_CalibrateNeed').value, CalResult: document.getElementById('f_CalResult').value,
-                ReplacePlan: document.getElementById('f_ReplacePlan').value, Type: document.getElementById('f_Type').value,
-                DeptOwner: document.getElementById('f_DeptOwner').value, DeptUse: document.getElementById('f_DeptUse').value,
-                Location: document.getElementById('f_Location').value, PIC: document.getElementById('f_PIC').value,
-                FiscalYear: document.getElementById('f_FiscalYear').value, AcqDate: document.getElementById('f_AcqDate').value,
-                AcqMethod: document.getElementById('f_AcqMethod').value, Vendor: document.getElementById('f_Vendor').value,
-                Price: document.getElementById('f_Price').value, Unit: document.getElementById('f_Unit').value,
-                LifeSpan: document.getElementById('f_LifeSpan').value, Deprec: document.getElementById('f_Deprec').value,
-                Note: document.getElementById('f_Note').value
+                action: 'updateDevice',
+                DeviceID: document.getElementById('m_DeviceID').value,
+                Status: document.getElementById('m_Status').value,
+                Location: document.getElementById('m_Location').value,
+                DeptUse: document.getElementById('m_DeptUse').value,
+                Note: document.getElementById('m_Note').value
             };
 
             const res = await callAPI(payload);
             if(res.success) {
                 alert(res.message);
-                document.getElementById('addDeviceForm').reset();
-                document.getElementById('addDeviceSection').classList.add('hidden');
-                // โหลดข้อมูลใหม่ทั้งหมดเพื่ออัปเดต Filter และตาราง
-                await fetchAndPrepareData(); 
-            } else { alert("เกิดข้อผิดพลาดในการบันทึก"); }
-            
-            btn.innerText = 'บันทึกข้อมูลเข้าสู่ระบบ'; btn.disabled = false;
+                closeManageModal();
+                await fetchAndPrepareData(); // รีเฟรชตาราง
+            } else {
+                alert(res.message || "เกิดข้อผิดพลาด");
+            }
+            btn.innerText = 'บันทึกการเปลี่ยนแปลง'; btn.disabled = false;
         });
+
+        // เปิด Modal เพิ่มข้อมูล (สำหรับ Admin)
+        document.getElementById('btnOpenAddModal').addEventListener('click', () => {
+            document.getElementById('addDeviceSection').classList.remove('hidden');
+        });
+
     </script>
 </body>
 </html>
