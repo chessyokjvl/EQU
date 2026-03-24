@@ -440,9 +440,15 @@
             btn.disabled = true;
 
             const payload = {
-                action: 'updateDevice', DeviceID: document.getElementById('m_DeviceID').value,
-                Status: document.getElementById('m_Status').value, Location: document.getElementById('m_Location').value,
-                DeptUse: document.getElementById('m_DeptUse').value, Note: document.getElementById('m_Note').value
+                action: 'updateDevice', 
+                DeviceID: document.getElementById('m_DeviceID').value,
+                DeviceName: document.getElementById('m_DeviceName').innerText, // เพิ่มชื่อเครื่อง
+                Status: document.getElementById('m_Status').value, 
+                Location: document.getElementById('m_Location').value,
+                DeptUse: document.getElementById('m_DeptUse').value, 
+                Note: document.getElementById('m_Note').value,
+                Username: localStorage.getItem('username'), // ข้อมูลผู้ทำรายการ
+                UserDept: localStorage.getItem('userDept')  // แผนกผู้ทำรายการ
             };
 
             const res = await callAPI(payload);
