@@ -68,18 +68,19 @@
             }
 
             // โหลดข้อมูลจาก API เพื่อมาทำสถิติ
+            // โหลดข้อมูลจาก API เพื่อมาทำสถิติ
             const res = await callAPI({ action: 'getDevices' });
             if (res && res.success && res.data) {
                 const devices = res.data;
                 document.getElementById('statTotal').innerText = devices.length;
                 
-                // นับจำนวนตามสถานะ
-                const ready = devices.filter(d => d.Status === 'พร้อมใช้').length;
-                const inUse = devices.filter(d => d.Status === 'ถูกยืม').length;
-                const repair = devices.filter(d => d.Status === 'ส่งซ่อม').length;
+                // แก้ไขการนับคำให้ตรงกับข้อมูลชุดใหม่ของคุณ
+                const ready = devices.filter(d => d.Status === 'ปกติ').length;
+                const repair = devices.filter(d => d.Status === 'ชำรุด').length;
+                const cancel = devices.filter(d => d.Status === 'ยกเลิก').length;
 
                 document.getElementById('statReady').innerText = ready;
-                document.getElementById('statInUse').innerText = inUse;
+                document.getElementById('statInUse').innerText = cancel; // เปลี่ยนการ์ดเหลืองเป็น 'ยกเลิก' หรือปรับ UI ตามต้องการ
                 document.getElementById('statRepair').innerText = repair;
             }
         });
