@@ -3,89 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>จัดการเครื่องมือ - ระบบบริหารจัดการเครื่องมือแพทย์</title>
+    <title>จัดการเครื่องมือ - ระบบจัดการเครื่องมือแพทย์</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style> body { font-family: 'Sarabun', sans-serif; } </style>
 </head>
 <body class="bg-slate-50 min-h-screen">
-
     <nav class="bg-blue-800 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center space-x-4">
-                    <span class="text-xl font-bold">MedEquip Center</span>
-                    <div class="hidden md:flex space-x-2">
-                        <a href="dashboard.html" class="hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">ภาพรวม (Dashboard)</a>
-                        <a href="devices.html" class="bg-blue-900 px-3 py-2 rounded-md text-sm font-medium">จัดการเครื่องมือ (Devices)</a>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-sm transition">ออกจากระบบ</button>
-                </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+            <div class="flex space-x-4">
+                <span class="text-xl font-bold">MedEquip</span>
+                <a href="dashboard.html" class="hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">ภาพรวม (Dashboard)</a>
+                <a href="devices.html" class="bg-blue-900 px-3 py-2 rounded-md text-sm font-medium">จัดการเครื่องมือ (Devices)</a>
             </div>
+            <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-sm">ออกจากระบบ</button>
         </div>
     </nav>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-slate-800">ทะเบียนเครื่องมือแพทย์</h1>
-            <button id="btnOpenModal" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg shadow-sm font-medium transition">+ เพิ่มเครื่องมือใหม่</button>
+            <button id="btnOpenModal" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium">+ เพิ่มเครื่องมือใหม่</button>
         </div>
 
         <div id="addDeviceSection" class="hidden bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-6">
-            <h2 class="text-lg font-bold text-slate-700 mb-4">ฟอร์มลงทะเบียนเครื่องมือใหม่</h2>
+            <h2 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">ลงทะเบียนเครื่องมือใหม่ (ครบถ้วน 25 รายการ)</h2>
             <form id="addDeviceForm">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-sm text-slate-600">รหัสเครื่อง (Device ID)</label>
-                        <input type="text" id="devId" class="w-full border p-2 rounded mt-1 outline-none focus:border-blue-500" required>
-                    </div>
-                    <div>
-                        <label class="text-sm text-slate-600">ชื่อเครื่องมือ (Name)</label>
-                        <input type="text" id="devName" class="w-full border p-2 rounded mt-1 outline-none focus:border-blue-500" required>
-                    </div>
-                    <div>
-                        <label class="text-sm text-slate-600">หมวดหมู่ (Category)</label>
-                        <select id="devCat" class="w-full border p-2 rounded mt-1 outline-none focus:border-blue-500">
-                            <option value="Life Support">Life Support (ช่วยชีวิต)</option>
-                            <option value="Monitor">Monitor (เฝ้าระวัง)</option>
-                            <option value="Treatment">Treatment (รักษา)</option>
-                            <option value="General">General (ทั่วไป)</option>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div><label class="text-xs text-slate-600">ลำดับ (No)</label><input type="text" id="f_No" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div><label class="text-xs text-slate-600">เลขครุภัณฑ์ (DeviceID)</label><input type="text" id="f_DeviceID" class="w-full border p-2 rounded text-sm mt-1" required></div>
+                    <div><label class="text-xs text-slate-600">ชื่อเรียก/คุณลักษณะ (Name)</label><input type="text" id="f_Name" class="w-full border p-2 rounded text-sm mt-1" required></div>
+                    
+                    <div><label class="text-xs text-slate-600">หมวด/ชนิด (Category)</label><input type="text" id="f_Category" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div><label class="text-xs text-slate-600">ยี่ห้อ (Brand)</label><input type="text" id="f_Brand" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div><label class="text-xs text-slate-600">รุ่น (Model)</label><input type="text" id="f_Model" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    
+                    <div><label class="text-xs text-slate-600">สถานะ (Status)</label>
+                        <select id="f_Status" class="w-full border p-2 rounded text-sm mt-1">
+                            <option value="ปกติ">ปกติ</option>
+                            <option value="ชำรุด">ชำรุด</option>
+                            <option value="ยกเลิก">ยกเลิก</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="text-sm text-slate-600">สถานะเริ่มต้น (Status)</label>
-                        <select id="devStatus" class="w-full border p-2 rounded mt-1 outline-none focus:border-blue-500">
-                            <option value="พร้อมใช้">พร้อมใช้</option>
-                            <option value="ส่งซ่อม">ส่งซ่อม</option>
-                            <option value="ถูกยืม">ถูกยืม</option>
+                    <div><label class="text-xs text-slate-600">ระดับความเสี่ยง (RiskLevel)</label>
+                        <select id="f_RiskLevel" class="w-full border p-2 rounded text-sm mt-1">
+                            <option value="">ไม่ระบุ</option><option value="สูง">สูง</option><option value="กลาง">กลาง</option><option value="ต่ำ">ต่ำ</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="text-sm text-slate-600">แผนกเจ้าของเครื่อง (Department)</label>
-                        <input type="text" id="devDept" class="w-full border p-2 rounded mt-1 outline-none focus:border-blue-500" required>
-                    </div>
-                    <div>
-                        <label class="text-sm text-slate-600">สถานที่ติดตั้ง/จัดเก็บ (Location)</label>
-                        <input type="text" id="devLoc" class="w-full border p-2 rounded mt-1 outline-none focus:border-blue-500" required>
-                    </div>
+                    <div><label class="text-xs text-slate-600">การสอบเทียบ (CalibrateNeed)</label><input type="text" id="f_CalibrateNeed" placeholder="จำเป็น/ไม่จำเป็น" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    
+                    <div><label class="text-xs text-slate-600">ผลสอบเทียบล่าสุด (CalResult)</label><input type="text" id="f_CalResult" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div><label class="text-xs text-slate-600">แผนจัดหาทดแทน (ReplacePlan)</label><input type="text" id="f_ReplacePlan" placeholder="มี/ยังไม่มี" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div><label class="text-xs text-slate-600">ประเภท (Type)</label><input type="text" id="f_Type" class="w-full border p-2 rounded text-sm mt-1"></div>
+
+                    <div><label class="text-xs text-slate-600">แผนกฝ่ายตามบัญชี (DeptOwner)</label><input type="text" id="f_DeptOwner" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div><label class="text-xs text-slate-600">ใช้งานที่ฝ่าย (DeptUse)</label><input type="text" id="f_DeptUse" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div><label class="text-xs text-slate-600">สถานที่ใช้งาน (Location)</label><input type="text" id="f_Location" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div><label class="text-xs text-slate-600">ผู้รับผิดชอบ (PIC)</label><input type="text" id="f_PIC" class="w-full border p-2 rounded text-sm mt-1"></div>
+
+                    <div><label class="text-xs text-slate-600">ปีงบประมาณที่ได้มา (FiscalYear)</label><input type="text" id="f_FiscalYear" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div><label class="text-xs text-slate-600">วันเดือนปีที่ได้มา (AcqDate)</label><input type="text" id="f_AcqDate" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div><label class="text-xs text-slate-600">วิธีการได้มา (AcqMethod)</label><input type="text" id="f_AcqMethod" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div><label class="text-xs text-slate-600">ผู้ขาย (Vendor)</label><input type="text" id="f_Vendor" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div><label class="text-xs text-slate-600">ราคาต่อหน่วย (Price)</label><input type="number" id="f_Price" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div><label class="text-xs text-slate-600">หน่วยนับ (Unit)</label><input type="text" id="f_Unit" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div><label class="text-xs text-slate-600">อายุการใช้งาน/ปี (LifeSpan)</label><input type="number" id="f_LifeSpan" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div><label class="text-xs text-slate-600">ค่าเสื่อมต่อปี (Deprec)</label><input type="number" id="f_Deprec" class="w-full border p-2 rounded text-sm mt-1"></div>
+                    <div class="md:col-span-2"><label class="text-xs text-slate-600">หมายเหตุ (Note)</label><input type="text" id="f_Note" class="w-full border p-2 rounded text-sm mt-1"></div>
                 </div>
-                <div class="flex justify-end space-x-2 mt-4">
-                    <button type="button" id="btnCancel" class="bg-slate-200 text-slate-700 px-4 py-2 rounded hover:bg-slate-300">ยกเลิก</button>
-                    <button type="submit" id="btnSaveDevice" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">บันทึกข้อมูล</button>
+                <div class="flex justify-end space-x-2 mt-6 border-t pt-4">
+                    <button type="button" id="btnCancel" class="bg-slate-200 text-slate-700 px-6 py-2 rounded">ยกเลิก</button>
+                    <button type="submit" id="btnSaveDevice" class="bg-blue-600 text-white px-8 py-2 rounded hover:bg-blue-700">บันทึกข้อมูลเข้าสู่ระบบ</button>
                 </div>
             </form>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden overflow-x-auto">
+        <div class="bg-white rounded-xl shadow-sm border overflow-hidden overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Device ID</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">ชื่อเครื่องมือ</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">หมวดหมู่</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">แผนก</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">เลขครุภัณฑ์</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">ชื่อเครื่องมือ/ยี่ห้อ</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">แผนกที่ใช้งาน</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">ความเสี่ยง</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">สถานะ</th>
                     </tr>
                 </thead>
@@ -98,93 +98,92 @@
 
     <script src="js/app.js"></script>
     <script>
-        checkAuth(); // เช็คสิทธิ์ก่อน
+        checkAuth();
 
-        // โหลดข้อมูลมาแสดงในตาราง
         async function loadDevices() {
             const tbody = document.getElementById('deviceTableBody');
-            
-            // เรียก API ดึงข้อมูล
             const res = await callAPI({ action: 'getDevices' });
-            
-            tbody.innerHTML = ''; // ล้างค่าเดิม
+            tbody.innerHTML = ''; 
             
             if (res && res.success && res.data && res.data.length > 0) {
                 res.data.forEach(d => {
-                    // กำหนดสีให้สถานะ
-                    let statusColor = 'bg-slate-100 text-slate-800'; // Default
-                    if (d.Status === 'พร้อมใช้') statusColor = 'bg-emerald-100 text-emerald-800';
-                    else if (d.Status === 'ส่งซ่อม') statusColor = 'bg-red-100 text-red-800';
-                    else if (d.Status === 'ถูกยืม') statusColor = 'bg-amber-100 text-amber-800';
+                    let statusColor = 'bg-slate-100 text-slate-800'; 
+                    if (d.Status === 'ปกติ') statusColor = 'bg-emerald-100 text-emerald-800';
+                    else if (d.Status === 'ชำรุด') statusColor = 'bg-red-100 text-red-800';
+                    else if (d.Status === 'ยกเลิก') statusColor = 'bg-gray-200 text-gray-600';
+
+                    let riskColor = 'text-slate-500';
+                    if (d.RiskLevel === 'สูง') riskColor = 'text-red-600 font-bold';
+                    else if (d.RiskLevel === 'กลาง') riskColor = 'text-amber-600 font-bold';
 
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">${d.DeviceID || '-'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700">${d.Name || '-'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${d.Category || '-'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${d.Department || '-'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">${d.Status || '-'}</span>
-                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700">${d.Name || '-'}<br><span class="text-xs text-slate-400">${d.Brand || ''}</span></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${d.DeptUse || d.DeptOwner || '-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm ${riskColor}">${d.RiskLevel || '-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">${d.Status || '-'}</span></td>
                     `;
                     tbody.appendChild(tr);
                 });
             } else {
-                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-slate-500">ยังไม่มีข้อมูลเครื่องมือในระบบ</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-slate-500">ยังไม่มีข้อมูลในระบบ</td></tr>';
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const role = localStorage.getItem('userRole');
-            
-            // ถ้าไม่ใช่ Guest ให้แสดงปุ่มเพิ่มอุปกรณ์
-            if (role !== 'guest') {
-                document.getElementById('btnOpenModal').classList.remove('hidden');
-            }
-
-            loadDevices(); // โหลดข้อมูลลงตารางตอนเปิดหน้า
+            if (localStorage.getItem('userRole') !== 'guest') document.getElementById('btnOpenModal').classList.remove('hidden');
+            loadDevices();
         });
 
-        // เปิด-ปิด ฟอร์มเพิ่มข้อมูล
-        document.getElementById('btnOpenModal').addEventListener('click', () => {
-            document.getElementById('addDeviceSection').classList.remove('hidden');
-        });
+        document.getElementById('btnOpenModal').addEventListener('click', () => document.getElementById('addDeviceSection').classList.remove('hidden'));
         document.getElementById('btnCancel').addEventListener('click', () => {
             document.getElementById('addDeviceSection').classList.add('hidden');
             document.getElementById('addDeviceForm').reset();
         });
 
-        // จัดการการส่งฟอร์มเพิ่มเครื่องมือ
         document.getElementById('addDeviceForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btnSaveDevice');
-            btn.innerText = 'กำลังบันทึก...';
-            btn.disabled = true;
+            const btn = document.getElementById('btnSaveDevice'); btn.innerText = 'กำลังบันทึก...'; btn.disabled = true;
             
             const payload = {
                 action: 'addDevice',
-                deviceId: document.getElementById('devId').value,
-                name: document.getElementById('devName').value,
-                category: document.getElementById('devCat').value,
-                status: document.getElementById('devStatus').value,
-                department: document.getElementById('devDept').value,
-                location: document.getElementById('devLoc').value,
-                lastPm: '-' // ค่าเริ่มต้นวันที่ซ่อมบำรุง
+                No: document.getElementById('f_No').value,
+                DeviceID: document.getElementById('f_DeviceID').value,
+                Name: document.getElementById('f_Name').value,
+                Category: document.getElementById('f_Category').value,
+                Brand: document.getElementById('f_Brand').value,
+                Model: document.getElementById('f_Model').value,
+                Status: document.getElementById('f_Status').value,
+                RiskLevel: document.getElementById('f_RiskLevel').value,
+                CalibrateNeed: document.getElementById('f_CalibrateNeed').value,
+                CalResult: document.getElementById('f_CalResult').value,
+                ReplacePlan: document.getElementById('f_ReplacePlan').value,
+                Type: document.getElementById('f_Type').value,
+                DeptOwner: document.getElementById('f_DeptOwner').value,
+                DeptUse: document.getElementById('f_DeptUse').value,
+                Location: document.getElementById('f_Location').value,
+                PIC: document.getElementById('f_PIC').value,
+                FiscalYear: document.getElementById('f_FiscalYear').value,
+                AcqDate: document.getElementById('f_AcqDate').value,
+                AcqMethod: document.getElementById('f_AcqMethod').value,
+                Vendor: document.getElementById('f_Vendor').value,
+                Price: document.getElementById('f_Price').value,
+                Unit: document.getElementById('f_Unit').value,
+                LifeSpan: document.getElementById('f_LifeSpan').value,
+                Deprec: document.getElementById('f_Deprec').value,
+                Note: document.getElementById('f_Note').value
             };
 
             const res = await callAPI(payload);
-            
-            if(res && res.success) {
+            if(res.success) {
                 alert(res.message);
                 document.getElementById('addDeviceForm').reset();
                 document.getElementById('addDeviceSection').classList.add('hidden');
-                loadDevices(); // โหลดข้อมูลในตารางใหม่ทันที
-            } else {
-                alert("เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง");
-            }
+                loadDevices();
+            } else { alert("เกิดข้อผิดพลาดในการบันทึก"); }
             
-            btn.innerText = 'บันทึกข้อมูล';
-            btn.disabled = false;
+            btn.innerText = 'บันทึกข้อมูลเข้าสู่ระบบ'; btn.disabled = false;
         });
     </script>
 </body>
