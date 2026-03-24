@@ -6,17 +6,12 @@
     <title>เข้าสู่ระบบ - ระบบบริหารจัดการเครื่องมือแพทย์</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Sarabun', sans-serif; }
-    </style>
+    <style> body { font-family: 'Sarabun', sans-serif; } </style>
 </head>
 <body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
 
     <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md relative">
         <div class="text-center mb-6">
-            <div class="inline-block bg-blue-100 p-3 rounded-full mb-3">
-                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-            </div>
             <h2 id="formTitle" class="text-2xl font-bold text-slate-800">เข้าสู่ระบบ</h2>
             <p class="text-sm text-slate-500 mt-1">ระบบบริหารจัดการเครื่องมือแพทย์</p>
         </div>
@@ -24,169 +19,86 @@
         <form id="loginForm" class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">ชื่อผู้ใช้งาน (Username)</label>
-                <input type="text" id="loginUser" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" required>
+                <input type="text" id="loginUser" class="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none focus:border-blue-500" required>
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">รหัสผ่าน (Password)</label>
-                <input type="password" id="loginPass" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" required>
+                <input type="password" id="loginPass" class="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none focus:border-blue-500" required>
             </div>
-            <button type="submit" id="btnLogin" class="w-full bg-blue-600 text-white font-medium py-2.5 rounded-lg hover:bg-blue-700 transition">เข้าสู่ระบบ</button>
+            <button type="submit" id="btnLogin" class="w-full bg-blue-600 text-white font-medium py-2.5 rounded-lg hover:bg-blue-700">เข้าสู่ระบบ</button>
             
             <div class="flex items-center justify-between text-sm mt-4">
-                <a href="#" onclick="toggleForm('register')" class="text-blue-600 hover:text-blue-800 font-medium">สมัครสมาชิกใหม่</a>
-                <a href="#" onclick="toggleForm('forgot')" class="text-slate-500 hover:text-slate-700">ลืมรหัสผ่าน?</a>
+                <a href="#" onclick="toggleForm('register')" class="text-blue-600 font-medium hover:underline">สมัครสมาชิกใหม่</a>
+                <a href="#" onclick="toggleForm('forgot')" class="text-slate-500 hover:underline">ลืมรหัสผ่าน?</a>
             </div>
             
-            <div class="relative flex py-4 items-center">
-                <div class="flex-grow border-t border-slate-200"></div>
-                <span class="flex-shrink-0 mx-4 text-slate-400 text-sm">หรือ</span>
-                <div class="flex-grow border-t border-slate-200"></div>
-            </div>
-            
-            <button type="button" onclick="guestLogin()" class="w-full bg-slate-100 text-slate-700 font-medium py-2.5 rounded-lg hover:bg-slate-200 border border-slate-200 transition">เข้าชมระบบแบบ Guest</button>
+            <hr class="my-4">
+            <button type="button" onclick="guestLogin()" class="w-full bg-slate-100 text-slate-700 font-medium py-2.5 rounded-lg border hover:bg-slate-200">เข้าชมระบบแบบ Guest</button>
         </form>
 
         <form id="registerForm" class="space-y-4 hidden">
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">ชื่อผู้ใช้งาน (Username)</label>
-                <input type="text" id="regUser" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none" required>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">อีเมล (Email)</label>
-                <input type="email" id="regEmail" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none" required>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">รหัสผ่าน (Password)</label>
-                <input type="password" id="regPass" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none" required>
-            </div>
+            <div><label class="block text-sm font-medium text-slate-700 mb-1">ชื่อผู้ใช้งาน</label><input type="text" id="regUser" class="w-full px-4 py-2 border rounded-lg outline-none focus:border-emerald-500" required></div>
+            <div><label class="block text-sm font-medium text-slate-700 mb-1">อีเมล</label><input type="email" id="regEmail" class="w-full px-4 py-2 border rounded-lg outline-none focus:border-emerald-500" required></div>
+            <div><label class="block text-sm font-medium text-slate-700 mb-1">รหัสผ่าน</label><input type="password" id="regPass" class="w-full px-4 py-2 border rounded-lg outline-none focus:border-emerald-500" required></div>
             
-            <div class="flex items-start bg-slate-50 p-3 rounded-lg border border-slate-200 mt-2">
-                <div class="flex items-center h-5">
-                    <input type="checkbox" id="pdpaConsent" class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500" required>
-                </div>
-                <div class="ml-2 text-xs text-slate-600">
-                    <label for="pdpaConsent" class="font-medium text-slate-700">คำยินยอมข้อมูลส่วนบุคคล (PDPA)</label>
-                    <p>ข้าพเจ้ายินยอมให้ระบบจัดเก็บและประมวลผลข้อมูลส่วนบุคคล (อีเมลและชื่อผู้ใช้) เพื่อใช้ในการยืนยันตัวตน แจ้งเตือน และยกระดับคุณภาพการบริหารจัดการของโรงพยาบาล</p>
-                </div>
+            <div class="flex items-start bg-slate-50 p-3 rounded-lg border mt-2">
+                <input type="checkbox" id="pdpaConsent" class="mt-1 mr-2" required>
+                <label for="pdpaConsent" class="text-xs text-slate-600">ข้าพเจ้ายินยอมให้ระบบประมวลผลข้อมูลส่วนบุคคล (อีเมลและชื่อผู้ใช้) เพื่อใช้งานในระบบ ตามนโยบาย PDPA</label>
             </div>
 
-            <button type="submit" id="btnReg" class="w-full bg-emerald-600 text-white font-medium py-2.5 rounded-lg hover:bg-emerald-700 transition">ยืนยันการสมัครสมาชิก</button>
-            <div class="text-center pt-2">
-                <a href="#" onclick="toggleForm('login')" class="text-sm text-slate-500 hover:text-slate-800">ย้อนกลับไปหน้าเข้าสู่ระบบ</a>
-            </div>
+            <button type="submit" id="btnReg" class="w-full bg-emerald-600 text-white font-medium py-2.5 rounded-lg hover:bg-emerald-700">ยืนยันสมัครสมาชิก</button>
+            <div class="text-center pt-2"><a href="#" onclick="toggleForm('login')" class="text-sm text-slate-500 hover:text-slate-800">ย้อนกลับไปหน้าเข้าสู่ระบบ</a></div>
         </form>
 
         <form id="forgotForm" class="space-y-4 hidden">
-            <div class="bg-amber-50 p-3 rounded-lg border border-amber-200 mb-4">
-                <p class="text-sm text-amber-800">ระบบจะทำการสุ่มรหัสผ่านใหม่ และส่งไปยังอีเมลที่คุณได้ลงทะเบียนไว้</p>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">อีเมลที่ลงทะเบียน (Email)</label>
-                <input type="email" id="forgotEmail" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" required>
-            </div>
-            <button type="submit" id="btnForgot" class="w-full bg-amber-500 text-white font-medium py-2.5 rounded-lg hover:bg-amber-600 transition">ส่งรหัสผ่านใหม่</button>
-            <div class="text-center pt-2">
-                <a href="#" onclick="toggleForm('login')" class="text-sm text-slate-500 hover:text-slate-800">ย้อนกลับไปหน้าเข้าสู่ระบบ</a>
-            </div>
+            <p class="text-sm text-amber-800 bg-amber-50 p-3 rounded-lg border">ระบบจะทำการสุ่มรหัสผ่านใหม่ และส่งไปยังอีเมลที่ลงทะเบียนไว้</p>
+            <div><label class="block text-sm font-medium text-slate-700 mb-1">อีเมลที่ลงทะเบียน</label><input type="email" id="forgotEmail" class="w-full px-4 py-2 border rounded-lg outline-none focus:border-amber-500" required></div>
+            <button type="submit" id="btnForgot" class="w-full bg-amber-500 text-white font-medium py-2.5 rounded-lg hover:bg-amber-600">ส่งรหัสผ่านใหม่</button>
+            <div class="text-center pt-2"><a href="#" onclick="toggleForm('login')" class="text-sm text-slate-500 hover:text-slate-800">ย้อนกลับไปหน้าเข้าสู่ระบบ</a></div>
         </form>
     </div>
 
     <script src="js/app.js"></script>
     <script>
-        // ฟังก์ชันสลับการแสดงผล Form
         function toggleForm(type) {
             document.getElementById('loginForm').classList.add('hidden');
             document.getElementById('registerForm').classList.add('hidden');
             document.getElementById('forgotForm').classList.add('hidden');
-            
-            if(type === 'login') {
-                document.getElementById('loginForm').classList.remove('hidden');
-                document.getElementById('formTitle').innerText = 'เข้าสู่ระบบ';
-            } else if (type === 'register') {
-                document.getElementById('registerForm').classList.remove('hidden');
-                document.getElementById('formTitle').innerText = 'ลงทะเบียนผู้ใช้ใหม่';
-            } else if (type === 'forgot') {
-                document.getElementById('forgotForm').classList.remove('hidden');
-                document.getElementById('formTitle').innerText = 'ลืมรหัสผ่าน';
-            }
+            if(type === 'login') { document.getElementById('loginForm').classList.remove('hidden'); document.getElementById('formTitle').innerText = 'เข้าสู่ระบบ'; }
+            if(type === 'register') { document.getElementById('registerForm').classList.remove('hidden'); document.getElementById('formTitle').innerText = 'ลงทะเบียนผู้ใช้ใหม่'; }
+            if(type === 'forgot') { document.getElementById('forgotForm').classList.remove('hidden'); document.getElementById('formTitle').innerText = 'ลืมรหัสผ่าน'; }
         }
 
-        // จัดการ Event กดเข้าสู่ระบบ
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btnLogin');
-            btn.innerText = 'กำลังตรวจสอบ...';
-            btn.disabled = true;
-
-            const payload = {
-                action: 'login',
-                username: document.getElementById('loginUser').value,
-                password: document.getElementById('loginPass').value
-            };
-            
-            const res = await callAPI(payload);
-            
+            const btn = document.getElementById('btnLogin'); btn.innerText = 'กำลังตรวจสอบ...'; btn.disabled = true;
+            const res = await callAPI({ action: 'login', username: document.getElementById('loginUser').value, password: document.getElementById('loginPass').value });
             if(res && res.success) {
-                // บันทึกสถานะการ Login ไว้ในเบราว์เซอร์
-                localStorage.setItem('userRole', res.role);
-                localStorage.setItem('username', res.username);
-                // เปลี่ยนหน้าไปที่ Dashboard
+                localStorage.setItem('userRole', res.role); localStorage.setItem('username', res.username);
                 window.location.href = 'dashboard.html';
             } else {
-                alert(res.message || "เกิดข้อผิดพลาด");
-                btn.innerText = 'เข้าสู่ระบบ';
-                btn.disabled = false;
+                alert(res.message); btn.innerText = 'เข้าสู่ระบบ'; btn.disabled = false;
             }
         });
 
-        // จัดการ Event สมัครสมาชิก
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btnReg');
-            btn.innerText = 'กำลังบันทึกข้อมูล...';
-            btn.disabled = true;
-
-            const payload = {
-                action: 'register',
-                username: document.getElementById('regUser').value,
-                email: document.getElementById('regEmail').value,
-                password: document.getElementById('regPass').value
-            };
-            
-            const res = await callAPI(payload);
+            const btn = document.getElementById('btnReg'); btn.innerText = 'กำลังบันทึก...'; btn.disabled = true;
+            const res = await callAPI({ action: 'register', username: document.getElementById('regUser').value, email: document.getElementById('regEmail').value, password: document.getElementById('regPass').value });
             alert(res.message);
-            
-            if(res && res.success) {
-                document.getElementById('registerForm').reset();
-                toggleForm('login');
-            }
-            btn.innerText = 'ยืนยันการสมัครสมาชิก';
-            btn.disabled = false;
+            if(res && res.success) { document.getElementById('registerForm').reset(); toggleForm('login'); }
+            btn.innerText = 'ยืนยันสมัครสมาชิก'; btn.disabled = false;
         });
 
-        // จัดการ Event ลืมรหัสผ่าน
         document.getElementById('forgotForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btnForgot');
-            btn.innerText = 'กำลังส่งอีเมล...';
-            btn.disabled = true;
-
-            const payload = {
-                action: 'forgotPassword',
-                email: document.getElementById('forgotEmail').value
-            };
-            
-            const res = await callAPI(payload);
-            alert(res.message);
-            
-            btn.innerText = 'ส่งรหัสผ่านใหม่';
-            btn.disabled = false;
+            const btn = document.getElementById('btnForgot'); btn.innerText = 'กำลังส่งอีเมล...'; btn.disabled = true;
+            const res = await callAPI({ action: 'forgotPassword', email: document.getElementById('forgotEmail').value });
+            alert(res.message); btn.innerText = 'ส่งรหัสผ่านใหม่'; btn.disabled = false;
         });
 
-        // ฟังก์ชันเข้าสู่ระบบแบบ Guest (ไม่ต้องเรียก API แค่เซ็ตค่า local)
         function guestLogin() {
-            localStorage.setItem('userRole', 'guest');
-            localStorage.setItem('username', 'ผู้เยี่ยมชม (Guest)');
+            localStorage.setItem('userRole', 'guest'); localStorage.setItem('username', 'Guest');
             window.location.href = 'dashboard.html';
         }
     </script>
