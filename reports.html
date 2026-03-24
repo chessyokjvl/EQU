@@ -94,14 +94,18 @@
                     <span class="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded font-bold">ระบบรอเปิดใช้งานในเฟสถัดไป</span>
                 </div>
                 <div class="p-6">
-                    <p class="text-sm text-slate-500 mb-4">ในอนาคต ส่วนนี้จะแสดงรายการ <b class="text-blue-600">การยืม การคืน และการแจ้งซ่อม</b> ที่บันทึกผ่านหน้าต่าง "จัดการ" พร้อมระบุเวลาและผู้ทำรายการ</p>
-                    <table class="min-w-full divide-y divide-slate-200 opacity-50">
-                        <thead class="bg-slate-100 text-xs uppercase text-slate-500">
-                            <tr><th class="px-4 py-2 text-left">วันที่/เวลา</th><th class="px-4 py-2 text-left">ประเภท</th><th class="px-4 py-2 text-left">เครื่องมือ</th><th class="px-4 py-2 text-left">ผู้ทำรายการ (หน่วยงาน)</th><th class="px-4 py-2 text-left">หมายเหตุ</th></tr>
+                   <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-100 text-xs uppercase text-slate-500 font-bold">
+                            <tr>
+                                <th class="px-4 py-3 text-left">วันที่/เวลา</th>
+                                <th class="px-4 py-3 text-left">การทำรายการ</th>
+                                <th class="px-4 py-3 text-left">เครื่องมือ</th>
+                                <th class="px-4 py-3 text-left">ผู้ทำรายการ (จากแผนก)</th>
+                                <th class="px-4 py-3 text-left">หมายเหตุ / ปลายทาง</th>
+                            </tr>
                         </thead>
-                        <tbody>
-                            <tr><td class="px-4 py-3 text-sm">24 มี.ค. 2026 10:00</td><td class="px-4 py-3"><span class="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded">ยืม</span></td><td class="px-4 py-3 text-sm">Defibrillator (ER)</td><td class="px-4 py-3 text-sm">พยาบาล A (ICU)</td><td class="px-4 py-3 text-sm">ยืมใช้ชั่วคราวเคสฉุกเฉิน</td></tr>
-                            <tr><td class="px-4 py-3 text-sm">23 มี.ค. 2026 14:30</td><td class="px-4 py-3"><span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">แจ้งซ่อม</span></td><td class="px-4 py-3 text-sm">Patient Monitor</td><td class="px-4 py-3 text-sm">เจ้าหน้าที่ B (OPD)</td><td class="px-4 py-3 text-sm">หน้าจอเปิดไม่ติด</td></tr>
+                        <tbody id="transactionTableBody" class="divide-y divide-slate-100">
+                            <tr><td colspan="5" class="px-4 py-6 text-center text-slate-400">กำลังโหลดประวัติ...</td></tr>
                         </tbody>
                     </table>
                 </div>
