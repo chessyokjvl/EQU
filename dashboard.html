@@ -3,65 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - ระบบจัดการเครื่องมือแพทย์</title>
+    <title>Dashboard - MedEquip Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style> body { font-family: 'Sarabun', sans-serif; } </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
-    <nav class="bg-blue-800 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
-            <div class="flex space-x-4">
-                <span class="text-xl font-bold">MedEquip</span>
-                <a href="dashboard.html" class="bg-blue-900 px-3 py-2 rounded-md text-sm font-medium">ภาพรวม (Dashboard)</a>
-                <a href="devices.html" class="hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">จัดการเครื่องมือ (Devices)</a>
-            </div>
-            <div class="flex space-x-4 items-center">
-                <span id="displayUser" class="text-sm text-blue-200"></span>
-                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-sm transition">ออกจากระบบ</button>
-            </div>
-        </div>
-    </nav>
+<body class="bg-slate-50 text-slate-800">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 class="text-2xl font-bold text-slate-800 mb-6">ภาพรวมระบบ (Executive Dashboard)</h1>
-        <div id="guestWarning" class="hidden bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-r-md">
-            <p class="text-amber-800 text-sm">คุณเข้าชมในฐานะ Guest จะสามารถดูภาพรวมได้เท่านั้น</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <a href="devices.html" class="block bg-white rounded-xl shadow-sm p-6 border hover:shadow-md hover:border-blue-400 transition cursor-pointer">
-                <p class="text-sm font-medium text-slate-500">เครื่องมือทั้งหมด</p>
-                <p class="text-3xl font-bold text-blue-600 mt-2" id="statTotal">0</p>
-                <p class="text-xs text-blue-400 mt-2 text-right">คลิกเพื่อดูทั้งหมด ➔</p>
-            </a>
-            
-            <a href="devices.html?status=ปกติ" class="block bg-white rounded-xl shadow-sm p-6 border hover:shadow-md hover:border-emerald-400 transition cursor-pointer">
-                <p class="text-sm font-medium text-slate-500">สถานะ: ปกติ (พร้อมใช้)</p>
-                <p class="text-3xl font-bold text-emerald-600 mt-2" id="statReady">0</p>
-                <p class="text-xs text-emerald-400 mt-2 text-right">คลิกเพื่อดูรายละเอียด ➔</p>
-            </a>
-            
-            <a href="devices.html?status=ชำรุด" class="block bg-white rounded-xl shadow-sm p-6 border hover:shadow-md hover:border-red-400 transition cursor-pointer">
-                <p class="text-sm font-medium text-slate-500">สถานะ: ชำรุด (ส่งซ่อม)</p>
-                <p class="text-3xl font-bold text-red-500 mt-2" id="statRepair">0</p>
-                <p class="text-xs text-red-400 mt-2 text-right">คลิกเพื่อดูรายละเอียด ➔</p>
-            </a>
-            
-            <a href="devices.html?status=ยกเลิก" class="block bg-white rounded-xl shadow-sm p-6 border hover:shadow-md hover:border-slate-400 transition cursor-pointer">
-                <p class="text-sm font-medium text-slate-500">สถานะ: ยกเลิก (แทงจำหน่าย)</p>
-                <p class="text-3xl font-bold text-slate-500 mt-2" id="statCancel">0</p>
-                <p class="text-xs text-slate-400 mt-2 text-right">คลิกเพื่อดูรายละเอียด ➔</p>
-            </a>
-        </div>
+    <div class="md:hidden bg-blue-800 text-white flex justify-between items-center p-4 shadow-md sticky top-0 z-30">
+        <div class="text-xl font-bold tracking-wider">MedEquip</div>
+        <button id="mobileMenuBtn" class="p-2 focus:outline-none focus:bg-blue-700 rounded-md">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
     </div>
+
+    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-40 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 bg-blue-900 text-white w-64 transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-50 flex flex-col shadow-2xl md:shadow-none">
+        <div class="flex items-center justify-between p-6 border-b border-blue-800/50">
+            <span class="text-2xl font-bold tracking-wider">MedEquip</span>
+            <button id="closeSidebarBtn" class="md:hidden text-blue-300 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            <a href="dashboard.html" class="flex items-center px-4 py-3 bg-blue-800/80 text-white rounded-xl transition font-medium">
+                <svg class="w-5 h-5 mr-3 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                ภาพรวม (Dashboard)
+            </a>
+            <a href="devices.html" class="flex items-center px-4 py-3 text-blue-200 hover:bg-blue-800/50 hover:text-white rounded-xl transition font-medium">
+                <svg class="w-5 h-5 mr-3 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                จัดการเครื่องมือ
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-blue-800/50 bg-blue-900/50">
+            <div class="flex items-center mb-4 px-2">
+                <div class="w-8 h-8 rounded-full bg-blue-700 flex items-center justify-center text-sm font-bold mr-3">U</div>
+                <div>
+                    <p id="displayUser" class="text-sm font-medium text-white truncate w-32"></p>
+                    <p id="displayRole" class="text-xs text-blue-300 capitalize"></p>
+                </div>
+            </div>
+            <button onclick="logout()" class="w-full flex items-center justify-center px-4 py-2 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition text-sm font-medium border border-red-500/20">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                ออกจากระบบ
+            </button>
+        </div>
+    </aside>
+
+    <main class="md:ml-64 p-4 md:p-8 min-h-screen transition-all duration-300">
+        <header class="mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-800">ภาพรวมระบบ</h1>
+            <p class="text-slate-500 mt-1">Executive Dashboard</p>
+        </header>
+
+        <div id="guestWarning" class="hidden bg-amber-50 border border-amber-200 p-4 mb-8 rounded-xl flex items-start shadow-sm">
+            <svg class="w-5 h-5 text-amber-500 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <p class="text-amber-800 text-sm">คุณเข้าชมในฐานะ <b>Guest</b> จะสามารถดูภาพรวมได้เท่านั้น ไม่สามารถแก้ไขข้อมูลได้</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+            <a href="devices.html" class="group block bg-white rounded-2xl shadow-sm p-6 border border-slate-100 hover:shadow-lg hover:border-blue-200 transition-all cursor-pointer relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-24 h-24 bg-blue-50 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                <p class="text-sm font-medium text-slate-500">เครื่องมือทั้งหมด</p>
+                <p class="text-4xl font-bold text-blue-600 mt-2" id="statTotal">0</p>
+                <p class="text-xs text-blue-500 mt-4 flex items-center">คลิกเพื่อดูรายการทั้งหมด <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></p>
+            </a>
+            
+            <a href="devices.html?status=ปกติ" class="group block bg-white rounded-2xl shadow-sm p-6 border border-slate-100 hover:shadow-lg hover:border-emerald-200 transition-all cursor-pointer relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-24 h-24 bg-emerald-50 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                <p class="text-sm font-medium text-slate-500">สถานะ: ปกติ (พร้อมใช้)</p>
+                <p class="text-4xl font-bold text-emerald-500 mt-2" id="statReady">0</p>
+                <p class="text-xs text-emerald-500 mt-4 flex items-center">กรองเฉพาะเครื่องพร้อมใช้ <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></p>
+            </a>
+            
+            <a href="devices.html?status=ชำรุด" class="group block bg-white rounded-2xl shadow-sm p-6 border border-slate-100 hover:shadow-lg hover:border-red-200 transition-all cursor-pointer relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-24 h-24 bg-red-50 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                <p class="text-sm font-medium text-slate-500">สถานะ: ชำรุด (ส่งซ่อม)</p>
+                <p class="text-4xl font-bold text-red-500 mt-2" id="statRepair">0</p>
+                <p class="text-xs text-red-500 mt-4 flex items-center">ตรวจสอบรายการส่งซ่อม <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></p>
+            </a>
+            
+            <a href="devices.html?status=ยกเลิก" class="group block bg-white rounded-2xl shadow-sm p-6 border border-slate-100 hover:shadow-lg hover:border-slate-300 transition-all cursor-pointer relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-24 h-24 bg-slate-100 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                <p class="text-sm font-medium text-slate-500">สถานะ: ยกเลิก (แทงจำหน่าย)</p>
+                <p class="text-4xl font-bold text-slate-500 mt-2" id="statCancel">0</p>
+                <p class="text-xs text-slate-500 mt-4 flex items-center">ดูประวัติแทงจำหน่าย <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></p>
+            </a>
+        </div>
+    </main>
 
     <script src="js/app.js"></script>
     <script>
         checkAuth();
+
+        // Sidebar Toggle Logic
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            sidebarOverlay.classList.remove('hidden');
+            setTimeout(() => sidebarOverlay.classList.remove('opacity-0'), 10);
+        }
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            sidebarOverlay.classList.add('opacity-0');
+            setTimeout(() => sidebarOverlay.classList.add('hidden'), 300);
+        }
+
+        document.getElementById('mobileMenuBtn').addEventListener('click', openSidebar);
+        document.getElementById('closeSidebarBtn').addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // Data Loading Logic
         document.addEventListener('DOMContentLoaded', async () => {
             const role = localStorage.getItem('userRole');
-            document.getElementById('displayUser').innerText = `${localStorage.getItem('username')} (${role})`;
+            document.getElementById('displayUser').innerText = localStorage.getItem('username');
+            document.getElementById('displayRole').innerText = role === 'guest' ? 'ผู้เยี่ยมชม' : role;
+            
             if (role === 'guest') document.getElementById('guestWarning').classList.remove('hidden');
 
             const res = await callAPI({ action: 'getDevices' });
