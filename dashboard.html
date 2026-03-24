@@ -18,7 +18,7 @@
             </div>
             <div class="flex space-x-4 items-center">
                 <span id="displayUser" class="text-sm text-blue-200"></span>
-                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-sm">ออกจากระบบ</button>
+                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-sm transition">ออกจากระบบ</button>
             </div>
         </div>
     </nav>
@@ -30,10 +30,29 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white rounded-xl shadow-sm p-6 border"><p class="text-sm font-medium text-slate-500">ทั้งหมด</p><p class="text-3xl font-bold text-blue-600 mt-2" id="statTotal">0</p></div>
-            <div class="bg-white rounded-xl shadow-sm p-6 border"><p class="text-sm font-medium text-slate-500">สถานะ: ปกติ</p><p class="text-3xl font-bold text-emerald-600 mt-2" id="statReady">0</p></div>
-            <div class="bg-white rounded-xl shadow-sm p-6 border"><p class="text-sm font-medium text-slate-500">สถานะ: ชำรุด</p><p class="text-3xl font-bold text-red-500 mt-2" id="statRepair">0</p></div>
-            <div class="bg-white rounded-xl shadow-sm p-6 border"><p class="text-sm font-medium text-slate-500">สถานะ: ยกเลิก</p><p class="text-3xl font-bold text-slate-500 mt-2" id="statCancel">0</p></div>
+            <a href="devices.html" class="block bg-white rounded-xl shadow-sm p-6 border hover:shadow-md hover:border-blue-400 transition cursor-pointer">
+                <p class="text-sm font-medium text-slate-500">เครื่องมือทั้งหมด</p>
+                <p class="text-3xl font-bold text-blue-600 mt-2" id="statTotal">0</p>
+                <p class="text-xs text-blue-400 mt-2 text-right">คลิกเพื่อดูทั้งหมด ➔</p>
+            </a>
+            
+            <a href="devices.html?status=ปกติ" class="block bg-white rounded-xl shadow-sm p-6 border hover:shadow-md hover:border-emerald-400 transition cursor-pointer">
+                <p class="text-sm font-medium text-slate-500">สถานะ: ปกติ (พร้อมใช้)</p>
+                <p class="text-3xl font-bold text-emerald-600 mt-2" id="statReady">0</p>
+                <p class="text-xs text-emerald-400 mt-2 text-right">คลิกเพื่อดูรายละเอียด ➔</p>
+            </a>
+            
+            <a href="devices.html?status=ชำรุด" class="block bg-white rounded-xl shadow-sm p-6 border hover:shadow-md hover:border-red-400 transition cursor-pointer">
+                <p class="text-sm font-medium text-slate-500">สถานะ: ชำรุด (ส่งซ่อม)</p>
+                <p class="text-3xl font-bold text-red-500 mt-2" id="statRepair">0</p>
+                <p class="text-xs text-red-400 mt-2 text-right">คลิกเพื่อดูรายละเอียด ➔</p>
+            </a>
+            
+            <a href="devices.html?status=ยกเลิก" class="block bg-white rounded-xl shadow-sm p-6 border hover:shadow-md hover:border-slate-400 transition cursor-pointer">
+                <p class="text-sm font-medium text-slate-500">สถานะ: ยกเลิก (แทงจำหน่าย)</p>
+                <p class="text-3xl font-bold text-slate-500 mt-2" id="statCancel">0</p>
+                <p class="text-xs text-slate-400 mt-2 text-right">คลิกเพื่อดูรายละเอียด ➔</p>
+            </a>
         </div>
     </div>
 
