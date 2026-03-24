@@ -76,7 +76,9 @@
             const btn = document.getElementById('btnLogin'); btn.innerText = 'กำลังตรวจสอบ...'; btn.disabled = true;
             const res = await callAPI({ action: 'login', username: document.getElementById('loginUser').value, password: document.getElementById('loginPass').value });
             if(res && res.success) {
-                localStorage.setItem('userRole', res.role); localStorage.setItem('username', res.username);
+                localStorage.setItem('userRole', res.role); 
+                localStorage.setItem('username', res.username);
+                localStorage.setItem('userDept', res.department); // บรรทัดที่เพิ่มเข้ามา
                 window.location.href = 'dashboard.html';
             } else { alert(res.message); btn.innerText = 'เข้าสู่ระบบ'; btn.disabled = false; }
         });
