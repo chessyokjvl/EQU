@@ -243,6 +243,14 @@
                     </div>
                 </div>
 
+                <div class="pt-4 mt-4 border-t border-slate-200 grid grid-cols-2 gap-4">
+                    <div class="col-span-2"><p class="text-xs font-bold text-blue-600 uppercase tracking-wider">ข้อมูลบัญชีและค่าเสื่อม (Admin Only)</p></div>
+                    <div><label class="block text-xs font-semibold text-slate-700 mb-1">ปีงบประมาณที่ได้มา (พ.ศ.)</label><input type="text" id="m_FiscalYear" class="w-full border p-2 rounded-lg bg-slate-50 outline-none focus:border-blue-500"></div>
+                    <div><label class="block text-xs font-semibold text-slate-700 mb-1">อายุการใช้งาน (ปี)</label><input type="number" id="m_LifeSpan" class="w-full border p-2 rounded-lg bg-slate-50 outline-none focus:border-blue-500"></div>
+                    <div><label class="block text-xs font-semibold text-slate-700 mb-1">ราคาจัดซื้อ (บาท)</label><input type="number" id="m_Price" class="w-full border p-2 rounded-lg bg-slate-50 outline-none focus:border-blue-500"></div>
+                    <div><label class="block text-xs font-semibold text-slate-700 mb-1">ค่าเสื่อม/ปี (บาท)</label><input type="number" id="m_Deprec" class="w-full border p-2 rounded-lg bg-slate-50 outline-none focus:border-blue-500"></div>
+                </div>
+                
                 <div class="mt-8 flex justify-end space-x-3 pt-4 border-t border-slate-100">
                     <button type="button" onclick="closeManageModal()" class="px-5 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition font-medium">ยกเลิก</button>
                     <button type="submit" id="btnUpdate" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-md shadow-blue-500/30 transition font-medium flex items-center">
@@ -403,24 +411,33 @@
         }
 
         // ================= Modal Logic =================
-        function openManageModal(id, name, status, location, dept, note) {
-            document.getElementById('m_DeviceID').value = id;
-            document.getElementById('m_DeviceIDDisplay').innerText = id;
-            document.getElementById('m_DeviceName').innerText = name;
-            document.getElementById('m_Status').value = status;
-            document.getElementById('m_Location').value = location;
-            document.getElementById('m_DeptUse').value = dept;
-            document.getElementById('m_Note').value = note;
+        function openManageModal(deviceId) {
+            // ค้นหาข้อมูลเครื่องจาก Array ที่โหลดมาแล้ว
+            const d = allDevicesData.find(x => x.DeviceID === deviceId);
+            if (!d) return;
+
+            document.getElementById('m_DeviceID').value = d.DeviceID;
+            document.getElementById('m_DeviceIDDisplay').innerText = d.DeviceID;
+            document.getElementById('m_DeviceName').innerText = d.Name;
+            document.getElementById('m_Status').value = d.Status || 'ปกติ';
+            document.getElementById('m_Location').value = d.Location || '';
+            document.getElementById('m_DeptUse').value = d.DeptUse || d.DeptOwner || '';
+            document.getElementById('m_Note').value = d.Note || '';
             
+            // ข้อมูลการเงิน
+            document.getElementById('m_FiscalYear').value = d.FiscalYear || '';
+            document.getElementById('m_LifeSpan').value = d.LifeSpan || '';
+            document.getElementById('m_Price').value = d.Price || '';
+            document.getElementById('m_Deprec').value = d.Deprec || '';
+
+            // ป้องกัน User ธรรมดาแก้ไขข้อมูลบัญชี
+            const isReadOnly = currentUserRole !== 'admin';
+            ['m_FiscalYear', 'm_LifeSpan', 'm_Price', 'm_Deprec'].forEach(id => document.getElementById(id).readOnly = isReadOnly);
+
             const modal = document.getElementById('manageModal');
             const modalContent = document.getElementById('manageModalContent');
-            
             modal.classList.remove('hidden');
-            // Animation Trigger
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modalContent.classList.remove('scale-95');
-            }, 10);
+            setTimeout(() => { modal.classList.remove('opacity-0'); modalContent.classList.remove('scale-95'); }, 10);
         }
 
         function closeManageModal() {
@@ -448,7 +465,9 @@
                 DeptUse: document.getElementById('m_DeptUse').value, 
                 Note: document.getElementById('m_Note').value,
                 Username: localStorage.getItem('username'), // ข้อมูลผู้ทำรายการ
-                UserDept: localStorage.getItem('userDept')  // แผนกผู้ทำรายการ
+                UserDept: localStorage.getItem('userDept'), // แผนกผู้ทำรายการ
+                Price: document.getElementById('m_Price').value, LifeSpan: document.getElementById('m_LifeSpan').value,
+                Deprec: document.getElementById('m_Deprec').value, FiscalYear: document.getElementById('m_FiscalYear').value
             };
 
             const res = await callAPI(payload);
