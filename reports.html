@@ -3,109 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายงานและสถิติ - JVL MedEquip Center</title>
+    <title>รายงานทะเบียนทรัพย์สิน - MedEquip Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <style> body { font-family: 'Sarabun', sans-serif; } .modal-overlay { background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); } </style>
+    <style> 
+        body { font-family: 'Sarabun', sans-serif; } 
+        /* ซ่อนส่วนอื่นๆ เวลาสั่ง Print ให้เห็นแค่ตาราง */
+        @media print {
+            body { background: white; }
+            #sidebar, nav, .no-print { display: none !important; }
+            main { margin-left: 0 !important; padding: 0 !important; }
+            .print-area { width: 100%; border: 1px solid #ccc; }
+        }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
-
-    <div class="md:hidden bg-blue-800 text-white flex justify-between items-center p-4 shadow-md sticky top-0 z-30">
-        <div class="text-xl font-bold tracking-wider">MedEquip</div>
-        <button id="mobileMenuBtn" class="p-2 focus:outline-none focus:bg-blue-700 rounded-md">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-        </button>
-    </div>
-
-    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-40 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
-
-    <aside id="sidebar" class="fixed inset-y-0 left-0 bg-blue-900 text-white w-64 transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-50 flex flex-col shadow-2xl md:shadow-none">
-        <div class="flex items-center justify-between p-6 border-b border-blue-800/50">
-            <span class="text-2xl font-bold tracking-wider">JVL MedEquip</span>
-            <button id="closeSidebarBtn" class="md:hidden text-blue-300 hover:text-white">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
+    <nav class="bg-blue-800 text-white shadow-md sticky top-0 z-30 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+            <span class="text-xl font-bold">MedEquip | Reports</span>
+            <div class="space-x-4"><a href="dashboard.html" class="hover:text-blue-200 text-sm font-medium">กลับหน้าหลัก</a></div>
         </div>
-        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-            <a href="dashboard.html" class="flex items-center px-4 py-3 text-blue-200 hover:bg-blue-800/50 hover:text-white rounded-xl transition font-medium">
-                <svg class="w-5 h-5 mr-3 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg> ภาพรวม (Dashboard)
-            </a>
-            <a href="devices.html" class="flex items-center px-4 py-3 text-blue-200 hover:bg-blue-800/50 hover:text-white rounded-xl transition font-medium">
-                <svg class="w-5 h-5 mr-3 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg> จัดการเครื่องมือ
-            </a>
-            <a href="reports.html" class="flex items-center px-4 py-3 bg-blue-800/80 text-white rounded-xl transition font-medium">
-                <svg class="w-5 h-5 mr-3 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg> รายงาน (Reports)
-            </a>
-        </nav>
-        <div class="p-4 border-t border-blue-800/50 bg-blue-900/50">
-            <div class="flex items-center mb-4 px-2">
-                <div class="w-8 h-8 rounded-full bg-blue-700 flex items-center justify-center text-sm font-bold mr-3">U</div>
-                <div><p id="displayUser" class="text-sm font-medium text-white truncate w-32"></p><p id="displayRole" class="text-xs text-blue-300 capitalize"></p></div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-4 md:p-8 min-h-screen">
+        <header class="mb-8 border-b border-slate-200 pb-4 flex justify-between items-end no-print">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-slate-800">รายงานทะเบียนทรัพย์สิน (Asset Register)</h1>
+                <p class="text-slate-500 mt-1">สรุปมูลค่า ค่าเสื่อม และอายุการใช้งาน</p>
             </div>
-            <button onclick="logout()" class="w-full flex items-center justify-center px-4 py-2 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition text-sm font-medium border border-red-500/20">ออกจากระบบ</button>
-        </div>
-    </aside>
-
-    <main class="md:ml-64 p-4 md:p-8 min-h-screen">
-        <header class="mb-8 border-b border-slate-200 pb-4">
-            <h1 class="text-2xl md:text-3xl font-bold text-slate-800">รายงานและสถิติเชิงลึก</h1>
-            <p class="text-slate-500 mt-1">Analytics & Financial Reports</p>
+            <div class="space-x-2">
+                <button onclick="exportTableToCSV('MedEquip_Asset_Report.csv')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm shadow-sm">📥 Export CSV</button>
+                <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm shadow-sm">🖨️ พิมพ์รายงาน</button>
+            </div>
         </header>
 
-        <div id="loadingData" class="text-center py-10 text-slate-500 animate-pulse">กำลังดึงข้อมูลเพื่อประมวลผลรายงาน...</div>
+        <div id="loadingData" class="text-center py-10 text-slate-500 animate-pulse no-print">กำลังประมวลผลข้อมูลบัญชี...</div>
 
         <div id="reportContent" class="hidden">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-2xl shadow-lg p-6 text-white">
-                    <p class="text-indigo-100 text-sm font-medium mb-1">มูลค่าสินทรัพย์รวม (ทั้งหมด)</p>
-                    <h3 class="text-3xl font-bold tracking-tight" id="valTotal">฿ 0.00</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 no-print">
+                <div class="bg-indigo-600 rounded-2xl shadow p-6 text-white cursor-pointer hover:bg-indigo-700 transition" onclick="document.getElementById('assetTableSection').scrollIntoView({behavior: 'smooth'})">
+                    <p class="text-indigo-100 text-sm font-medium mb-1">มูลค่าจัดซื้อรวม (Initial Value)</p>
+                    <h3 class="text-3xl font-bold tracking-tight" id="valTotalInitial">฿ 0.00</h3>
+                    <p class="text-xs text-indigo-200 mt-2">คลิกเพื่อดูรายละเอียด</p>
                 </div>
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <p class="text-slate-500 text-sm font-medium mb-1">ค่าเสื่อมราคารวมต่อปี</p>
-                    <h3 class="text-2xl font-bold text-rose-500 tracking-tight" id="valDeprec">฿ 0.00</h3>
+                <div class="bg-emerald-600 rounded-2xl shadow p-6 text-white cursor-pointer hover:bg-emerald-700 transition" onclick="document.getElementById('assetTableSection').scrollIntoView({behavior: 'smooth'})">
+                    <p class="text-emerald-100 text-sm font-medium mb-1">มูลค่าคงเหลือปัจจุบัน (Net Book Value)</p>
+                    <h3 class="text-3xl font-bold tracking-tight" id="valTotalCurrent">฿ 0.00</h3>
+                    <p class="text-xs text-emerald-200 mt-2">หักค่าเสื่อมสะสมแล้ว</p>
                 </div>
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <p class="text-slate-500 text-sm font-medium mb-1">อายุการใช้งานเฉลี่ย</p>
-                    <h3 class="text-2xl font-bold text-blue-600 tracking-tight"><span id="valAvgLife">0</span> <span class="text-base font-normal text-slate-500">ปี</span></h3>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">ผลการสอบเทียบภาพรวม</h3>
-                    <div class="relative h-64"><canvas id="chartCalibration"></canvas></div>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">จำนวนเครื่องมือแยกตามปีงบประมาณที่ได้มา</h3>
-                    <div class="relative h-64"><canvas id="chartFiscalYear"></canvas></div>
+                <div class="bg-rose-600 rounded-2xl shadow p-6 text-white">
+                    <p class="text-rose-100 text-sm font-medium mb-1">เครื่องมือที่หมดอายุการใช้งาน (เหลือ 1 บาท)</p>
+                    <h3 class="text-3xl font-bold tracking-tight"><span id="valExpiredCount">0</span> <span class="text-base font-normal">รายการ</span></h3>
+                    <p class="text-xs text-rose-200 mt-2">ควรพิจารณาทดแทน/แทงจำหน่าย</p>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8">
-                <h3 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">สัดส่วนมูลค่าเครื่องมือ แบ่งตามประเภท (Category)</h3>
-                <div class="relative h-72 w-full"><canvas id="chartCategoryValue"></canvas></div>
-            </div>
-
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-                <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                    <h3 class="text-lg font-bold text-slate-700">ประวัติการทำรายการ (Logs & Transactions)</h3>
+            <div id="assetTableSection" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden print-area">
+                <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-slate-700">บัญชีรายละเอียดครุภัณฑ์ (เรียงลำดับได้)</h3>
+                    <span class="text-xs text-slate-500" id="currentThaiYearTxt">ปีงบประมาณปัจจุบัน: 2569</span>
                 </div>
-                <div class="p-6">
-                   <table class="min-w-full divide-y divide-slate-200">
-                        <thead class="bg-slate-100 text-xs uppercase text-slate-500 font-bold">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200 text-sm" id="assetTable">
+                        <thead class="bg-slate-100 text-slate-600 font-bold uppercase text-xs">
                             <tr>
-                                <th class="px-4 py-3 text-left">วันที่/เวลา</th>
-                                <th class="px-4 py-3 text-left">การทำรายการ</th>
-                                <th class="px-4 py-3 text-left">เครื่องมือ</th>
-                                <th class="px-4 py-3 text-left">ผู้ทำรายการ (จากแผนก)</th>
-                                <th class="px-4 py-3 text-left">หมายเหตุ / ปลายทาง</th>
+                                <th class="px-4 py-3 text-left cursor-pointer hover:bg-slate-200" onclick="sortTable(0)">เลขครุภัณฑ์ ⇅</th>
+                                <th class="px-4 py-3 text-left cursor-pointer hover:bg-slate-200" onclick="sortTable(1)">ชื่อเครื่องมือ ⇅</th>
+                                <th class="px-4 py-3 text-left cursor-pointer hover:bg-slate-200" onclick="sortTable(2)">ปีที่ได้มา ⇅</th>
+                                <th class="px-4 py-3 text-right cursor-pointer hover:bg-slate-200" onclick="sortTable(3, true)">อายุ (ปี) ⇅</th>
+                                <th class="px-4 py-3 text-right cursor-pointer hover:bg-slate-200" onclick="sortTable(4, true)">มูลค่าจัดซื้อ ⇅</th>
+                                <th class="px-4 py-3 text-right cursor-pointer hover:bg-slate-200" onclick="sortTable(5, true)">ค่าเสื่อม/ปี ⇅</th>
+                                <th class="px-4 py-3 text-right cursor-pointer hover:bg-slate-200 bg-emerald-50 text-emerald-700" onclick="sortTable(6, true)">มูลค่าคงเหลือ ⇅</th>
                             </tr>
                         </thead>
-                        <tbody id="transactionTableBody" class="divide-y divide-slate-100">
-                            <tr><td colspan="5" class="px-4 py-6 text-center text-slate-400">กำลังโหลดประวัติ...</td></tr>
-                        </tbody>
+                        <tbody id="assetTableBody" class="divide-y divide-slate-100">
+                            </tbody>
                     </table>
                 </div>
             </div>
@@ -115,119 +87,147 @@
     <script src="js/app.js"></script>
     <script>
         checkAuth();
-
-        // Sidebar Menu Logic
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
         
-        function openSidebar() { sidebar.classList.remove('-translate-x-full'); sidebarOverlay.classList.remove('hidden'); setTimeout(() => sidebarOverlay.classList.remove('opacity-0'), 10); }
-        function closeSidebar() { sidebar.classList.add('-translate-x-full'); sidebarOverlay.classList.add('opacity-0'); setTimeout(() => sidebarOverlay.classList.add('hidden'), 300); }
+        let reportData = [];
 
-        document.getElementById('mobileMenuBtn').addEventListener('click', openSidebar);
-        document.getElementById('closeSidebarBtn').addEventListener('click', closeSidebar);
-        sidebarOverlay.addEventListener('click', closeSidebar);
-
-        // Data Processing Logic
         document.addEventListener('DOMContentLoaded', async () => {
-            document.getElementById('displayUser').innerText = localStorage.getItem('username');
-            document.getElementById('displayRole').innerText = localStorage.getItem('userRole') === 'guest' ? 'ผู้เยี่ยมชม' : localStorage.getItem('userRole');
-
             const res = await callAPI({ action: 'getDevices' });
-            
             document.getElementById('loadingData').classList.add('hidden');
             document.getElementById('reportContent').classList.remove('hidden');
 
             if (res && res.success && res.data) {
-                const devices = res.data;
-                generateReports(devices);
+                calculateFinancials(res.data);
             }
         });
 
-        function generateReports(devices) {
-            // Helper: คลีนค่าเงิน (ลบ comma) ให้เป็นตัวเลข
-            const parseNum = (val) => {
-                if(!val) return 0;
-                const num = parseFloat(String(val).replace(/,/g, ''));
-                return isNaN(num) ? 0 : num;
-            };
+        function calculateFinancials(devices) {
+            // คำนวณปี พ.ศ. ปัจจุบันอัตโนมัติ (ค.ศ. ปัจจุบัน + 543)
+            const currentYearBE = new Date().getFullYear() + 543;
+            document.getElementById('currentThaiYearTxt').innerText = `ปีประเมินปัจจุบัน: ${currentYearBE}`;
+
+            const parseNum = (val) => { const n = parseFloat(String(val).replace(/,/g, '')); return isNaN(n) ? 0 : n; };
             
-            // 1. คำนวณภาพรวมการเงิน
-            let totalValue = 0, totalDeprec = 0, totalLifeSpan = 0, countLifeSpan = 0;
-            
+            let sumInitial = 0;
+            let sumCurrent = 0;
+            let countExpired = 0;
+            const tbody = document.getElementById('assetTableBody');
+            tbody.innerHTML = '';
+
             devices.forEach(d => {
-                totalValue += parseNum(d.Price);
-                totalDeprec += parseNum(d.Deprec);
-                let life = parseNum(d.LifeSpan);
-                if(life > 0) { totalLifeSpan += life; countLifeSpan++; }
-            });
+                const price = parseNum(d.Price);
+                const lifeSpan = parseNum(d.LifeSpan);
+                const deprecYearly = parseNum(d.Deprec);
+                // พยายามดึงตัวเลขปีออกมาจากข้อความ เช่น "2565-03-22" หรือ "2565"
+                const acqYearStr = String(d.FiscalYear || d.AcqDate || '');
+                const yearMatch = acqYearStr.match(/\d{4}/);
+                const acqYear = yearMatch ? parseInt(yearMatch[0]) : currentYearBE;
 
-            document.getElementById('valTotal').innerText = '฿ ' + totalValue.toLocaleString('th-TH', {minimumFractionDigits: 2});
-            document.getElementById('valDeprec').innerText = '฿ ' + totalDeprec.toLocaleString('th-TH', {minimumFractionDigits: 2});
-            document.getElementById('valAvgLife').innerText = countLifeSpan > 0 ? (totalLifeSpan / countLifeSpan).toFixed(1) : 0;
+                let currentValue = price;
+                let age = 0;
+                let isExpired = false;
 
-            // 2. เตรียมข้อมูลสำหรับ กราฟผลสอบเทียบ
-            const calCounts = { 'ผ่าน': 0, 'ไม่ผ่าน': 0, 'รอผล/ไม่ได้ระบุ': 0 };
-            devices.forEach(d => {
-                const res = (d.CalResult || '').trim();
-                if(res.includes('ผ่าน') && !res.includes('ไม่ผ่าน')) calCounts['ผ่าน']++;
-                else if(res.includes('ไม่ผ่าน')) calCounts['ไม่ผ่าน']++;
-                else calCounts['รอผล/ไม่ได้ระบุ']++;
-            });
+                if (price > 0 && acqYear > 0) {
+                    age = currentYearBE - acqYear;
+                    if (age < 0) age = 0;
 
-            new Chart(document.getElementById('chartCalibration'), {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(calCounts),
-                    datasets: [{
-                        data: Object.values(calCounts),
-                        backgroundColor: ['#10b981', '#ef4444', '#cbd5e1'],
-                        borderWidth: 0
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-            });
-
-            // 3. เตรียมข้อมูลสำหรับ กราฟปีงบประมาณ
-            const yearCounts = {};
-            devices.forEach(d => {
-                const y = (d.FiscalYear || 'ไม่ระบุ').trim();
-                yearCounts[y] = (yearCounts[y] || 0) + 1;
-            });
-            // เรียงปีจากน้อยไปมาก
-            const sortedYears = Object.keys(yearCounts).sort();
-            const yearData = sortedYears.map(y => yearCounts[y]);
-
-            new Chart(document.getElementById('chartFiscalYear'), {
-                type: 'bar',
-                data: {
-                    labels: sortedYears,
-                    datasets: [{ label: 'จำนวนเครื่องมือ (รายการ)', data: yearData, backgroundColor: '#3b82f6', borderRadius: 4 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
-            });
-
-            // 4. เตรียมข้อมูลสำหรับ กราฟมูลค่าตามหมวดหมู่ (Category)
-            const catValues = {};
-            devices.forEach(d => {
-                const c = (d.Category || 'ไม่ระบุ').trim();
-                catValues[c] = (catValues[c] || 0) + parseNum(d.Price);
-            });
-            
-            // คัดมาเฉพาะ Top 10 ที่มีมูลค่าสูงสุด
-            const sortedCats = Object.keys(catValues).sort((a,b) => catValues[b] - catValues[a]).slice(0, 10);
-            const catValueData = sortedCats.map(c => catValues[c]);
-
-            new Chart(document.getElementById('chartCategoryValue'), {
-                type: 'bar',
-                data: {
-                    labels: sortedCats,
-                    datasets: [{ label: 'มูลค่ารวม (บาท)', data: catValueData, backgroundColor: '#6366f1', borderRadius: 4 }]
-                },
-                options: { 
-                    responsive: true, maintainAspectRatio: false, indexAxis: 'y', // ทำให้เป็นกราฟแนวนอน
-                    plugins: { tooltip: { callbacks: { label: (ctx) => '฿ ' + ctx.raw.toLocaleString() } } }
+                    if (lifeSpan > 0 && age >= lifeSpan) {
+                        // อายุเกินหรือเท่ากับ LifeSpan ตัดเหลือ 1 บาท
+                        currentValue = 1;
+                        isExpired = true;
+                        countExpired++;
+                    } else {
+                        // คำนวณหักค่าเสื่อมสะสม
+                        const accumulatedDeprec = deprecYearly * age;
+                        currentValue = price - accumulatedDeprec;
+                        if (currentValue < 1) currentValue = 1; // มูลค่าซากขั้นต่ำ 1 บาท
+                    }
                 }
+
+                sumInitial += price;
+                sumCurrent += currentValue;
+
+                // วาดลงตาราง
+                let valueColor = isExpired ? 'text-rose-600 font-bold' : 'text-emerald-600 font-bold';
+                let ageBadge = isExpired ? `<span class="bg-rose-100 text-rose-700 px-2 py-0.5 rounded text-xs ml-1">หมดอายุ</span>` : '';
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50";
+                tr.innerHTML = `
+                    <td class="px-4 py-3 font-medium text-slate-800">${d.DeviceID || '-'}</td>
+                    <td class="px-4 py-3">${d.Name || '-'}<br><span class="text-xs text-slate-400">${d.DeptUse || d.DeptOwner || '-'}</span></td>
+                    <td class="px-4 py-3 text-slate-600">${acqYear > 0 ? acqYear : '-'}</td>
+                    <td class="px-4 py-3 text-right">${age} ${ageBadge}</td>
+                    <td class="px-4 py-3 text-right text-slate-600">${price.toLocaleString('th-TH', {minimumFractionDigits: 2})}</td>
+                    <td class="px-4 py-3 text-right text-slate-500">${deprecYearly > 0 ? deprecYearly.toLocaleString('th-TH') : '-'}</td>
+                    <td class="px-4 py-3 text-right bg-emerald-50/30 ${valueColor}">${currentValue.toLocaleString('th-TH', {minimumFractionDigits: 2})}</td>
+                `;
+                tbody.appendChild(tr);
             });
+
+            // อัปเดต Summary Cards
+            document.getElementById('valTotalInitial').innerText = '฿ ' + sumInitial.toLocaleString('th-TH', {minimumFractionDigits: 2});
+            document.getElementById('valTotalCurrent').innerText = '฿ ' + sumCurrent.toLocaleString('th-TH', {minimumFractionDigits: 2});
+            document.getElementById('valExpiredCount').innerText = countExpired;
+        }
+
+        // ================= ฟังก์ชัน เรียงข้อมูลตาราง (Sortable Table) =================
+        let sortDirection = false;
+        function sortTable(columnIndex, isNumeric = false) {
+            const table = document.getElementById("assetTable");
+            let rows, switching, i, x, y, shouldSwitch;
+            switching = true;
+            sortDirection = !sortDirection;
+
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[columnIndex].innerText;
+                    y = rows[i + 1].getElementsByTagName("TD")[columnIndex].innerText;
+
+                    if (isNumeric) {
+                        // ลบลูกน้ำและสัญลักษณ์อื่นๆ ก่อนแปลงเป็นตัวเลข
+                        let numX = parseFloat(x.replace(/[^0-9.-]+/g,"")) || 0;
+                        let numY = parseFloat(y.replace(/[^0-9.-]+/g,"")) || 0;
+                        if (sortDirection ? numX > numY : numX < numY) { shouldSwitch = true; break; }
+                    } else {
+                        if (sortDirection ? x.toLowerCase() > y.toLowerCase() : x.toLowerCase() < y.toLowerCase()) { shouldSwitch = true; break; }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                }
+            }
+        }
+
+        // ================= ฟังก์ชัน Export CSV =================
+        function exportTableToCSV(filename) {
+            let csv = [];
+            // ใส่ BOM เพื่อให้อ่านภาษาไทยใน Excel ได้
+            csv.push('\uFEFF');
+            const rows = document.querySelectorAll("table tr");
+            
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+                for (let j = 0; j < cols.length; j++) {
+                    // ทำความสะอาดข้อความ (ลบขึ้นบรรทัดใหม่, ครอบด้วย Double Quote)
+                    let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, " ").trim();
+                    row.push('"' + data + '"');
+                }
+                csv.push(row.join(","));
+            }
+
+            // ดาวน์โหลดไฟล์
+            let csvFile = new Blob([csv.join("\n")], {type: "text/csv;charset=utf-8;"});
+            let downloadLink = document.createElement("a");
+            downloadLink.download = filename;
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
         }
     </script>
 </body>
