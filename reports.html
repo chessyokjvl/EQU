@@ -3,80 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายงานทะเบียนทรัพย์สิน - MedEquip Center</title>
+    <title>รายงานเชิงคุณภาพและสถิติ - MedEquip Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    
     <style> 
         body { font-family: 'Sarabun', sans-serif; } 
-        /* ซ่อนส่วนอื่นๆ เวลาสั่ง Print ให้เห็นแค่ตาราง */
-        @media print {
-            body { background: white; }
-            #sidebar, nav, .no-print { display: none !important; }
-            main { margin-left: 0 !important; padding: 0 !important; }
-            .print-area { width: 100%; border: 1px solid #ccc; }
-        }
+        .ts-control { border-radius: 0.75rem; border-color: #e2e8f0; padding: 0.6rem; }
+        @media print { .no-print { display: none !important; } main { margin-left: 0 !important; } }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
-    <nav class="bg-blue-800 text-white shadow-md sticky top-0 z-30 no-print">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
-            <span class="text-xl font-bold">MedEquip | Reports</span>
-            <div class="space-x-4"><a href="dashboard.html" class="hover:text-blue-200 text-sm font-medium">กลับหน้าหลัก</a></div>
-        </div>
-    </nav>
 
-    <main class="max-w-7xl mx-auto p-4 md:p-8 min-h-screen">
-        <header class="mb-8 border-b border-slate-200 pb-4 flex justify-between items-end no-print">
+    <div class="md:hidden bg-blue-900 text-white p-4 flex justify-between items-center sticky top-0 z-30 no-print">
+        <span class="font-bold">MedEquip Reports</span>
+        <button id="mobileMenuBtn" class="p-1"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+    </div>
+
+    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-40 hidden md:hidden"></div>
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 bg-blue-950 text-white w-64 transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-50 flex flex-col no-print">
+        <div class="p-6 border-b border-blue-900"><span class="text-2xl font-bold">MedEquip</span></div>
+        <nav class="flex-1 p-4 space-y-2">
+            <a href="dashboard.html" class="flex items-center px-4 py-3 text-blue-200 hover:bg-blue-900 rounded-xl transition">ภาพรวม</a>
+            <a href="devices.html" class="flex items-center px-4 py-3 text-blue-200 hover:bg-blue-900 rounded-xl transition">จัดการเครื่องมือ</a>
+            <a href="reports.html" class="flex items-center px-4 py-3 bg-blue-800 text-white rounded-xl shadow-lg">รายงานเชิงลึก</a>
+        </nav>
+        <div class="p-4 border-t border-blue-900"><button onclick="logout()" class="w-full py-2 bg-red-500/20 text-red-400 rounded-lg border border-red-500/30 text-sm">ออกจากระบบ</button></div>
+    </aside>
+
+    <main class="md:ml-64 p-4 md:p-8 min-h-screen">
+        <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6 no-print">
             <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-slate-800">รายงานทะเบียนทรัพย์สิน (Asset Register)</h1>
-                <p class="text-slate-500 mt-1">สรุปมูลค่า ค่าเสื่อม และอายุการใช้งาน</p>
+                <h1 class="text-2xl md:text-3xl font-bold text-slate-800">รายงานวิเคราะห์คุณภาพและความเสี่ยง</h1>
+                <p class="text-slate-500">Quality & Risk Assessment Report</p>
             </div>
-            <div class="space-x-2">
-                <button onclick="exportTableToCSV('MedEquip_Asset_Report.csv')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm shadow-sm">📥 Export CSV</button>
-                <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm shadow-sm">🖨️ พิมพ์รายงาน</button>
+            <div class="flex gap-2">
+                <button onclick="window.print()" class="bg-white border border-slate-300 px-4 py-2 rounded-xl text-sm font-medium hover:bg-slate-50 transition">พิมพ์รายงาน</button>
+                <button onclick="exportData()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-indigo-700 transition">ส่งออกข้อมูล</button>
             </div>
         </header>
 
-        <div id="loadingData" class="text-center py-10 text-slate-500 animate-pulse no-print">กำลังประมวลผลข้อมูลบัญชี...</div>
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8 no-print">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">กรองตามหน่วยงาน</label>
+                    <select id="filterDept" placeholder="เลือกหน่วยงานเพื่อดูรายงานเฉพาะส่วน..."></select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">กรองตามประเภทเครื่องมือ</label>
+                    <select id="filterCat" placeholder="เลือกประเภทเครื่องมือ..."></select>
+                </div>
+            </div>
+        </section>
 
-        <div id="reportContent" class="hidden">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 no-print">
-                <div class="bg-indigo-600 rounded-2xl shadow p-6 text-white cursor-pointer hover:bg-indigo-700 transition" onclick="document.getElementById('assetTableSection').scrollIntoView({behavior: 'smooth'})">
-                    <p class="text-indigo-100 text-sm font-medium mb-1">มูลค่าจัดซื้อรวม (Initial Value)</p>
-                    <h3 class="text-3xl font-bold tracking-tight" id="valTotalInitial">฿ 0.00</h3>
-                    <p class="text-xs text-indigo-200 mt-2">คลิกเพื่อดูรายละเอียด</p>
+        <div id="loading" class="text-center py-20 text-slate-400 animate-pulse">กำลังรวบรวมข้อมูลคุณภาพ...</div>
+
+        <div id="reportArea" class="hidden space-y-8">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl border shadow-sm col-span-1">
+                    <h3 class="text-lg font-bold mb-4 text-slate-700 border-b pb-2">สัดส่วนความเสี่ยง (Risk Matrix)</h3>
+                    <div class="h-64 relative"><canvas id="riskChart"></canvas></div>
                 </div>
-                <div class="bg-emerald-600 rounded-2xl shadow p-6 text-white cursor-pointer hover:bg-emerald-700 transition" onclick="document.getElementById('assetTableSection').scrollIntoView({behavior: 'smooth'})">
-                    <p class="text-emerald-100 text-sm font-medium mb-1">มูลค่าคงเหลือปัจจุบัน (Net Book Value)</p>
-                    <h3 class="text-3xl font-bold tracking-tight" id="valTotalCurrent">฿ 0.00</h3>
-                    <p class="text-xs text-emerald-200 mt-2">หักค่าเสื่อมสะสมแล้ว</p>
-                </div>
-                <div class="bg-rose-600 rounded-2xl shadow p-6 text-white">
-                    <p class="text-rose-100 text-sm font-medium mb-1">เครื่องมือที่หมดอายุการใช้งาน (เหลือ 1 บาท)</p>
-                    <h3 class="text-3xl font-bold tracking-tight"><span id="valExpiredCount">0</span> <span class="text-base font-normal">รายการ</span></h3>
-                    <p class="text-xs text-rose-200 mt-2">ควรพิจารณาทดแทน/แทงจำหน่าย</p>
+                
+                <div class="bg-white p-6 rounded-2xl border shadow-sm col-span-2">
+                    <h3 class="text-lg font-bold mb-4 text-slate-700 border-b pb-2">สถานะการสอบเทียบ (Calibration Status)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="h-64 relative"><canvas id="calChart"></canvas></div>
+                        <div class="flex flex-col justify-center space-y-4">
+                            <div class="p-4 bg-red-50 rounded-xl border border-red-100">
+                                <p class="text-xs text-red-600 font-bold uppercase tracking-widest">จุดวิกฤต (Critical Overdue)</p>
+                                <p class="text-2xl font-bold text-red-700" id="criticalOverdue">0</p>
+                                <p class="text-xs text-red-500">เครื่อง High-Risk ที่สอบเทียบหมดอายุ</p>
+                            </div>
+                            <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
+                                <p class="text-xs text-emerald-600 font-bold uppercase tracking-widest">ความครอบคลุม (Compliance)</p>
+                                <p class="text-2xl font-bold text-emerald-700" id="complianceRate">0%</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div id="assetTableSection" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden print-area">
-                <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                    <h3 class="text-lg font-bold text-slate-700">บัญชีรายละเอียดครุภัณฑ์ (เรียงลำดับได้)</h3>
-                    <span class="text-xs text-slate-500" id="currentThaiYearTxt">ปีงบประมาณปัจจุบัน: 2569</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-2xl border shadow-sm">
+                    <h3 class="text-lg font-bold mb-4 text-slate-700 border-b pb-2">อายุการใช้งานเฉลี่ย แบ่งตามความเสี่ยง</h3>
+                    <div class="h-64 relative"><canvas id="ageRiskChart"></canvas></div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border shadow-sm">
+                    <h3 class="text-lg font-bold mb-4 text-slate-700 border-b pb-2">Top 5 แผนกที่มีมูลค่าเครื่องมือสูงสุด</h3>
+                    <div class="h-64 relative"><canvas id="deptValueChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+                <div class="p-5 bg-slate-800 text-white flex justify-between items-center">
+                    <h3 class="font-bold">รายการเครื่องมือความเสี่ยงสูง (High Risk Assets)</h3>
+                    <span class="text-xs bg-red-500 px-2 py-1 rounded">ต้องเฝ้าระวังพิเศษ</span>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-slate-200 text-sm" id="assetTable">
-                        <thead class="bg-slate-100 text-slate-600 font-bold uppercase text-xs">
-                            <tr>
-                                <th class="px-4 py-3 text-left cursor-pointer hover:bg-slate-200" onclick="sortTable(0)">เลขครุภัณฑ์ ⇅</th>
-                                <th class="px-4 py-3 text-left cursor-pointer hover:bg-slate-200" onclick="sortTable(1)">ชื่อเครื่องมือ ⇅</th>
-                                <th class="px-4 py-3 text-left cursor-pointer hover:bg-slate-200" onclick="sortTable(2)">ปีที่ได้มา ⇅</th>
-                                <th class="px-4 py-3 text-right cursor-pointer hover:bg-slate-200" onclick="sortTable(3, true)">อายุ (ปี) ⇅</th>
-                                <th class="px-4 py-3 text-right cursor-pointer hover:bg-slate-200" onclick="sortTable(4, true)">มูลค่าจัดซื้อ ⇅</th>
-                                <th class="px-4 py-3 text-right cursor-pointer hover:bg-slate-200" onclick="sortTable(5, true)">ค่าเสื่อม/ปี ⇅</th>
-                                <th class="px-4 py-3 text-right cursor-pointer hover:bg-slate-200 bg-emerald-50 text-emerald-700" onclick="sortTable(6, true)">มูลค่าคงเหลือ ⇅</th>
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                            <tr class="text-xs font-bold text-slate-500 uppercase">
+                                <th class="px-6 py-3 text-left">เลขครุภัณฑ์</th>
+                                <th class="px-6 py-3 text-left">ชื่อเครื่องมือ</th>
+                                <th class="px-6 py-3 text-left">แผนก</th>
+                                <th class="px-6 py-3 text-left">ผลสอบเทียบ</th>
+                                <th class="px-6 py-3 text-left">วันหมดอายุ CAL</th>
                             </tr>
                         </thead>
-                        <tbody id="assetTableBody" class="divide-y divide-slate-100">
+                        <tbody id="highRiskTable" class="divide-y divide-slate-100 text-sm">
                             </tbody>
                     </table>
                 </div>
@@ -85,150 +124,160 @@
     </main>
 
     <script src="js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <script>
         checkAuth();
-        
-        let reportData = [];
+        let masterData = [];
+        let tsDept, tsCat;
+        let charts = {};
 
         document.addEventListener('DOMContentLoaded', async () => {
             const res = await callAPI({ action: 'getDevices' });
-            document.getElementById('loadingData').classList.add('hidden');
-            document.getElementById('reportContent').classList.remove('hidden');
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('reportArea').classList.remove('hidden');
 
-            if (res && res.success && res.data) {
-                calculateFinancials(res.data);
+            if (res && res.success) {
+                masterData = res.data;
+                initFilters();
+                updateReports(masterData);
             }
         });
 
-        function calculateFinancials(devices) {
-            // คำนวณปี พ.ศ. ปัจจุบันอัตโนมัติ (ค.ศ. ปัจจุบัน + 543)
-            const currentYearBE = new Date().getFullYear() + 543;
-            document.getElementById('currentThaiYearTxt').innerText = `ปีประเมินปัจจุบัน: ${currentYearBE}`;
+        function initFilters() {
+            const depts = [...new Set(masterData.map(d => d.DeptUse || d.DeptOwner).filter(Boolean))].sort();
+            const cats = [...new Set(masterData.map(d => d.Category).filter(Boolean))].sort();
 
-            const parseNum = (val) => { const n = parseFloat(String(val).replace(/,/g, '')); return isNaN(n) ? 0 : n; };
+            const dSelect = document.getElementById('filterDept');
+            depts.forEach(d => dSelect.add(new Option(d, d)));
+            const cSelect = document.getElementById('filterCat');
+            cats.forEach(c => cSelect.add(new Option(c, c)));
+
+            tsDept = new TomSelect("#filterDept", { plugins: ['clear_button'], onChange: () => filterAndRefresh() });
+            tsCat = new TomSelect("#filterCat", { plugins: ['clear_button'], onChange: () => filterAndRefresh() });
+        }
+
+        function filterAndRefresh() {
+            const dVal = tsDept.getValue();
+            const cVal = tsCat.getValue();
+            const filtered = masterData.filter(d => {
+                const matchD = dVal === '' || (d.DeptUse === dVal || d.DeptOwner === dVal);
+                const matchC = cVal === '' || d.Category === cVal;
+                return matchD && matchC;
+            });
+            updateReports(filtered);
+        }
+
+        function updateReports(data) {
+            const currentYear = new Date().getFullYear() + 543;
             
-            let sumInitial = 0;
-            let sumCurrent = 0;
-            let countExpired = 0;
-            const tbody = document.getElementById('assetTableBody');
-            tbody.innerHTML = '';
+            // 1. สถิติความเสี่ยง
+            const risks = { 'สูง': 0, 'กลาง': 0, 'ต่ำ': 0, 'ไม่ระบุ': 0 };
+            data.forEach(d => risks[d.RiskLevel || 'ไม่ระบุ']++);
 
-            devices.forEach(d => {
-                const price = parseNum(d.Price);
-                const lifeSpan = parseNum(d.LifeSpan);
-                const deprecYearly = parseNum(d.Deprec);
-                // พยายามดึงตัวเลขปีออกมาจากข้อความ เช่น "2565-03-22" หรือ "2565"
-                const acqYearStr = String(d.FiscalYear || d.AcqDate || '');
-                const yearMatch = acqYearStr.match(/\d{4}/);
-                const acqYear = yearMatch ? parseInt(yearMatch[0]) : currentYearBE;
+            // 2. การสอบเทียบ
+            let calValid = 0, calExpired = 0, criticalCount = 0;
+            data.forEach(d => {
+                const dueDate = d.CalDueDate ? new Date(d.CalDueDate.split('/').reverse().join('-')) : null;
+                const isExpired = dueDate && dueDate < new Date();
+                
+                if (isExpired) calExpired++; else calValid++;
+                if (isExpired && d.RiskLevel === 'สูง') criticalCount++;
+            });
+            document.getElementById('criticalOverdue').innerText = criticalCount;
+            document.getElementById('complianceRate').innerText = data.length > 0 ? Math.round((calValid/data.length)*100) + '%' : '0%';
 
-                let currentValue = price;
-                let age = 0;
-                let isExpired = false;
-
-                if (price > 0 && acqYear > 0) {
-                    age = currentYearBE - acqYear;
-                    if (age < 0) age = 0;
-
-                    if (lifeSpan > 0 && age >= lifeSpan) {
-                        // อายุเกินหรือเท่ากับ LifeSpan ตัดเหลือ 1 บาท
-                        currentValue = 1;
-                        isExpired = true;
-                        countExpired++;
-                    } else {
-                        // คำนวณหักค่าเสื่อมสะสม
-                        const accumulatedDeprec = deprecYearly * age;
-                        currentValue = price - accumulatedDeprec;
-                        if (currentValue < 1) currentValue = 1; // มูลค่าซากขั้นต่ำ 1 บาท
-                    }
+            // 3. อายุเฉลี่ยตามความเสี่ยง
+            const ageRisk = { 'สูง': {sum:0, count:0}, 'กลาง': {sum:0, count:0}, 'ต่ำ': {sum:0, count:0} };
+            data.forEach(d => {
+                const year = parseInt(d.FiscalYear) || 0;
+                if(year > 0 && ageRisk[d.RiskLevel]) {
+                    ageRisk[d.RiskLevel].sum += (currentYear - year);
+                    ageRisk[d.RiskLevel].count++;
                 }
-
-                sumInitial += price;
-                sumCurrent += currentValue;
-
-                // วาดลงตาราง
-                let valueColor = isExpired ? 'text-rose-600 font-bold' : 'text-emerald-600 font-bold';
-                let ageBadge = isExpired ? `<span class="bg-rose-100 text-rose-700 px-2 py-0.5 rounded text-xs ml-1">หมดอายุ</span>` : '';
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50";
-                tr.innerHTML = `
-                    <td class="px-4 py-3 font-medium text-slate-800">${d.DeviceID || '-'}</td>
-                    <td class="px-4 py-3">${d.Name || '-'}<br><span class="text-xs text-slate-400">${d.DeptUse || d.DeptOwner || '-'}</span></td>
-                    <td class="px-4 py-3 text-slate-600">${acqYear > 0 ? acqYear : '-'}</td>
-                    <td class="px-4 py-3 text-right">${age} ${ageBadge}</td>
-                    <td class="px-4 py-3 text-right text-slate-600">${price.toLocaleString('th-TH', {minimumFractionDigits: 2})}</td>
-                    <td class="px-4 py-3 text-right text-slate-500">${deprecYearly > 0 ? deprecYearly.toLocaleString('th-TH') : '-'}</td>
-                    <td class="px-4 py-3 text-right bg-emerald-50/30 ${valueColor}">${currentValue.toLocaleString('th-TH', {minimumFractionDigits: 2})}</td>
-                `;
-                tbody.appendChild(tr);
             });
 
-            // อัปเดต Summary Cards
-            document.getElementById('valTotalInitial').innerText = '฿ ' + sumInitial.toLocaleString('th-TH', {minimumFractionDigits: 2});
-            document.getElementById('valTotalCurrent').innerText = '฿ ' + sumCurrent.toLocaleString('th-TH', {minimumFractionDigits: 2});
-            document.getElementById('valExpiredCount').innerText = countExpired;
+            // 4. มูลค่ารายแผนก (Top 5)
+            const deptVals = {};
+            data.forEach(d => {
+                const dept = d.DeptUse || d.DeptOwner || 'ไม่ระบุ';
+                const price = parseFloat(String(d.Price).replace(/,/g, '')) || 0;
+                deptVals[dept] = (deptVals[dept] || 0) + price;
+            });
+            const topDepts = Object.keys(deptVals).sort((a,b) => deptVals[b] - deptVals[a]).slice(0, 5);
+
+            // Render Charts
+            renderRiskChart(risks);
+            renderCalChart(calValid, calExpired);
+            renderAgeRiskChart(ageRisk);
+            renderDeptValueChart(topDepts, deptVals);
+            renderHighRiskTable(data);
         }
 
-        // ================= ฟังก์ชัน เรียงข้อมูลตาราง (Sortable Table) =================
-        let sortDirection = false;
-        function sortTable(columnIndex, isNumeric = false) {
-            const table = document.getElementById("assetTable");
-            let rows, switching, i, x, y, shouldSwitch;
-            switching = true;
-            sortDirection = !sortDirection;
-
-            while (switching) {
-                switching = false;
-                rows = table.rows;
-                for (i = 1; i < (rows.length - 1); i++) {
-                    shouldSwitch = false;
-                    x = rows[i].getElementsByTagName("TD")[columnIndex].innerText;
-                    y = rows[i + 1].getElementsByTagName("TD")[columnIndex].innerText;
-
-                    if (isNumeric) {
-                        // ลบลูกน้ำและสัญลักษณ์อื่นๆ ก่อนแปลงเป็นตัวเลข
-                        let numX = parseFloat(x.replace(/[^0-9.-]+/g,"")) || 0;
-                        let numY = parseFloat(y.replace(/[^0-9.-]+/g,"")) || 0;
-                        if (sortDirection ? numX > numY : numX < numY) { shouldSwitch = true; break; }
-                    } else {
-                        if (sortDirection ? x.toLowerCase() > y.toLowerCase() : x.toLowerCase() < y.toLowerCase()) { shouldSwitch = true; break; }
-                    }
-                }
-                if (shouldSwitch) {
-                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                    switching = true;
-                }
-            }
+        function renderRiskChart(risks) {
+            if(charts.risk) charts.risk.destroy();
+            charts.risk = new Chart(document.getElementById('riskChart'), {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(risks),
+                    datasets: [{ data: Object.values(risks), backgroundColor: ['#ef4444', '#f59e0b', '#10b981', '#cbd5e1'] }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
         }
 
-        // ================= ฟังก์ชัน Export CSV =================
-        function exportTableToCSV(filename) {
-            let csv = [];
-            // ใส่ BOM เพื่อให้อ่านภาษาไทยใน Excel ได้
-            csv.push('\uFEFF');
-            const rows = document.querySelectorAll("table tr");
-            
-            for (let i = 0; i < rows.length; i++) {
-                let row = [], cols = rows[i].querySelectorAll("td, th");
-                for (let j = 0; j < cols.length; j++) {
-                    // ทำความสะอาดข้อความ (ลบขึ้นบรรทัดใหม่, ครอบด้วย Double Quote)
-                    let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, " ").trim();
-                    row.push('"' + data + '"');
-                }
-                csv.push(row.join(","));
-            }
-
-            // ดาวน์โหลดไฟล์
-            let csvFile = new Blob([csv.join("\n")], {type: "text/csv;charset=utf-8;"});
-            let downloadLink = document.createElement("a");
-            downloadLink.download = filename;
-            downloadLink.href = window.URL.createObjectURL(csvFile);
-            downloadLink.style.display = "none";
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
+        function renderCalChart(v, e) {
+            if(charts.cal) charts.cal.destroy();
+            charts.cal = new Chart(document.getElementById('calChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['ปกติ', 'หมดอายุ'],
+                    datasets: [{ data: [v, e], backgroundColor: ['#10b981', '#ef4444'] }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '70%' }
+            });
         }
+
+        function renderAgeRiskChart(ageObj) {
+            const labels = Object.keys(ageObj);
+            const data = labels.map(l => ageObj[l].count > 0 ? (ageObj[l].sum / ageObj[l].count).toFixed(1) : 0);
+            if(charts.age) charts.age.destroy();
+            charts.age = new Chart(document.getElementById('ageRiskChart'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{ label: 'อายุเฉลี่ย (ปี)', data: data, backgroundColor: '#6366f1' }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+            });
+        }
+
+        function renderDeptValueChart(depts, vals) {
+            if(charts.dept) charts.dept.destroy();
+            charts.dept = new Chart(document.getElementById('deptValueChart'), {
+                type: 'bar',
+                data: {
+                    labels: depts,
+                    datasets: [{ label: 'มูลค่า (ล้านบาท)', data: depts.map(d => (vals[d]/1000000).toFixed(2)), backgroundColor: '#3b82f6' }]
+                },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function renderHighRiskTable(data) {
+            const tbody = document.getElementById('highRiskTable');
+            const highRisk = data.filter(d => d.RiskLevel === 'สูง').slice(0, 10);
+            tbody.innerHTML = highRisk.map(d => `
+                <tr class="hover:bg-red-50 transition">
+                    <td class="px-6 py-4 font-bold text-slate-700">${d.DeviceID}</td>
+                    <td class="px-6 py-4 text-slate-600">${d.Name}</td>
+                    <td class="px-6 py-4 text-slate-500">${d.DeptUse || d.DeptOwner}</td>
+                    <td class="px-6 py-4"><span class="px-2 py-1 rounded text-xs font-bold ${d.CalResult === 'ผ่าน' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${d.CalResult || 'รอดำเนินการ'}</span></td>
+                    <td class="px-6 py-4 text-slate-500">${d.CalDueDate || '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
     </script>
 </body>
 </html>
